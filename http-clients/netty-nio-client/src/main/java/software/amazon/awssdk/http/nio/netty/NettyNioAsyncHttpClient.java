@@ -88,7 +88,7 @@ final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
                                 .channel(resolveSocketChannelClass())
                                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, serviceDefaults.getConnectionTimeout())
                                 .option(ChannelOption.TCP_NODELAY, true)
-                                .remoteAddress(key.getHost(), port(key));
+                                .remoteAddress(key.getHost(), port(key.getScheme(), key.getPort()));
                 SslContext sslContext = sslContext(key.getScheme());
                 return new FixedChannelPool(bootstrap,
                                             // TODO expose better options for this
@@ -102,7 +102,7 @@ final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
                                             SdkRequestContext requestContext,
                                             SdkHttpRequestProvider requestProvider,
                                             SdkHttpResponseHandler handler) {
-        final RequestContext context = new RequestContext(pools.get(stripPath(sdkRequest.endpoint())),
+        final RequestContext context = new RequestContext(pools.get(poolKey(sdkRequest)),
                                                           sdkRequest, requestProvider,
                                                           requestAdapter.adapt(sdkRequest),
                                                           handler);
@@ -133,12 +133,13 @@ final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
         return unwrapped instanceof EpollEventLoopGroup ? EpollSocketChannel.class : NioSocketChannel.class;
     }
 
-    private static URI stripPath(URI uri) {
-        return invokeSafely(() -> new URI(uri.getScheme(), null, uri.getHost(), port(uri), null, null, null));
+    private static URI poolKey(SdkHttpRequest sdkRequest) {
+        return invokeSafely(() -> new URI(sdkRequest.protocol(), null, sdkRequest.host(),
+                                          port(sdkRequest.protocol(), sdkRequest.port()), null, null, null));
     }
 
-    private static int port(URI uri) {
-        return uri.getPort() != -1 ? uri.getPort() : uri.getScheme().equalsIgnoreCase("https") ? 443 : 80;
+    private static int port(String protocol, Integer port) {
+        return port != null && port != -1 ? port : protocol.equalsIgnoreCase("https") ? 443 : 80;
     }
 
     private SslContext sslContext(String scheme) {

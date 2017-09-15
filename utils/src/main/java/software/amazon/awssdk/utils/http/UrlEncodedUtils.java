@@ -13,10 +13,11 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.util;
+package software.amazon.awssdk.utils.http;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
 import java.util.List;
 import software.amazon.awssdk.annotation.Immutable;
@@ -268,7 +269,7 @@ class UrlEncodedUtils {
         if (content == null) {
             return null;
         }
-        return urlEncode(content, charset != null ? Charset.forName(charset) : StringUtils.UTF8, URLENCODER, true);
+        return urlEncode(content, charset != null ? Charset.forName(charset) : StandardCharsets.UTF_8, URLENCODER, true);
     }
 
     /**
@@ -286,7 +287,7 @@ class UrlEncodedUtils {
         if (content == null) {
             return null;
         }
-        return urlEncode(content, charset != null ? charset : StringUtils.UTF8, URLENCODER, true);
+        return urlEncode(content, charset != null ? charset : StandardCharsets.UTF_8, URLENCODER, true);
     }
 
     /**

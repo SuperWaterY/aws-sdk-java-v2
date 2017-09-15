@@ -65,7 +65,7 @@ public class S3EndpointResolutionTest {
 
         s3Client.listBuckets();
 
-        assertThat(mockHttpClient.getLastRequest().endpoint())
+        assertThat(mockHttpClient.getLastRequest().toUri())
                 .as("Uses regional S3 endpoint without bucket")
                 .isEqualTo(URI.create(ENDPOINT_WITHOUT_BUCKET));
 
@@ -84,7 +84,7 @@ public class S3EndpointResolutionTest {
 
         s3Client.listBuckets();
 
-        assertThat(mockHttpClient.getLastRequest().endpoint())
+        assertThat(mockHttpClient.getLastRequest().toUri())
                 .as("Uses regional S3 endpoint without bucket")
                 .isEqualTo(URI.create("https://s3.dualstack.ap-south-1.amazonaws.com"));
 
@@ -105,7 +105,7 @@ public class S3EndpointResolutionTest {
 
         s3Client.listBuckets();
 
-        assertThat(mockHttpClient.getLastRequest().endpoint())
+        assertThat(mockHttpClient.getLastRequest().toUri())
                 .as("Uses custom endpoint")
                 .isEqualTo(customEndpoint);
     }
@@ -168,7 +168,7 @@ public class S3EndpointResolutionTest {
         s3Client.listObjects(ListObjectsRequest.builder().bucket(NON_DNS_COMPATIBLE_BUCKET).build());
 
         SdkHttpFullRequest capturedRequest = mockHttpClient.getLastRequest();
-        assertThat(capturedRequest.endpoint())
+        assertThat(capturedRequest.toUri())
                 .as("Uses endpoint without bucket name prepended")
                 .isEqualTo(URI.create(ENDPOINT_WITHOUT_BUCKET));
 
@@ -282,7 +282,7 @@ public class S3EndpointResolutionTest {
 
         s3Client.listBuckets();
 
-        assertThat(mockHttpClient.getLastRequest().endpoint())
+        assertThat(mockHttpClient.getLastRequest().toUri())
                 .as("Uses regional S3 endpoint")
                 .isEqualTo(URI.create("https://s3.ap-south-1.amazonaws.com"));
     }
@@ -305,7 +305,7 @@ public class S3EndpointResolutionTest {
      * @param endpoint        Expected endpoint.
      */
     private void assertUsesPathStyleAddressing(SdkHttpFullRequest capturedRequest, String endpoint) {
-        assertThat(capturedRequest.endpoint())
+        assertThat(capturedRequest.toUri())
                 .as("Uses endpoint without bucket name prepended")
                 .isEqualTo(URI.create(endpoint));
 
@@ -321,7 +321,7 @@ public class S3EndpointResolutionTest {
      * @param endpoint        Expected endpoint.
      */
     private void assertUsesVirtualAddressing(SdkHttpFullRequest capturedRequest, String endpoint) {
-        assertThat(capturedRequest.endpoint())
+        assertThat(capturedRequest.toUri())
                 .as("Uses virtual addressing")
                 .isEqualTo(URI.create(endpoint));
 

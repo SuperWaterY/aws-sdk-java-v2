@@ -86,36 +86,20 @@ public class QueryStringSigner extends AbstractAwsSigner {
      */
     private String calculateStringToSignV2(SdkHttpFullRequest.Builder request) throws SdkClientException {
         return "POST" + "\n" +
-               getCanonicalizedEndpoint(request.endpoint()) + "\n" +
+               getCanonicalizedEndpoint(request) + "\n" +
                getCanonicalizedResourcePath(request) + "\n" +
                getCanonicalizedQueryString(request.queryParameters());
     }
 
     private String getCanonicalizedResourcePath(SdkHttpFullRequest.Builder request) {
-        String resourcePath = "";
+        String resourcePath = request.resourcePath() == null ? "" : request.resourcePath(); // TODO: Optional? Empty always?
 
-        if (request.endpoint().getPath() != null) {
-            resourcePath += request.endpoint().getPath();
-        }
-
-        if (request.resourcePath() != null) {
-            if (resourcePath.length() > 0 &&
-                !resourcePath.endsWith("/") &&
-                !request.resourcePath().startsWith("/")) {
-                resourcePath += "/";
-            }
-
-            resourcePath += request.resourcePath();
-        } else if (!resourcePath.endsWith("/")) {
-            resourcePath += "/";
+        if (resourcePath.startsWith("//")) {
+            return resourcePath.substring(1);
         }
 
         if (!resourcePath.startsWith("/")) {
-            resourcePath = "/" + resourcePath;
-        }
-
-        if (resourcePath.startsWith("//")) {
-            resourcePath = resourcePath.substring(1);
+            return "/" + resourcePath;
         }
 
         return resourcePath;

@@ -22,7 +22,7 @@ import software.amazon.awssdk.interceptor.Context;
 import software.amazon.awssdk.interceptor.ExecutionAttributes;
 import software.amazon.awssdk.interceptor.ExecutionInterceptor;
 import software.amazon.awssdk.services.cloudsearchdomain.model.SearchRequest;
-import software.amazon.awssdk.util.SdkHttpUtils;
+import software.amazon.awssdk.utils.http.SdkHttpUtils;
 
 /**
  * Ensures that all SearchRequests use <code>POST</code> instead of <code>GET</code>.

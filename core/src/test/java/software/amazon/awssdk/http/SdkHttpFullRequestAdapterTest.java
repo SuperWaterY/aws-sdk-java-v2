@@ -60,7 +60,9 @@ public class SdkHttpFullRequestAdapterTest {
 
         SdkHttpFullRequest adapted = SdkHttpFullRequestAdapter.toHttpFullRequest(request);
 
-        assertThat(adapted.endpoint(), equalTo(request.getEndpoint()));
+        assertThat(adapted.protocol(), equalTo(request.getEndpoint().getScheme()));
+        assertThat(adapted.host(), equalTo(request.getEndpoint().getHost()));
+        assertThat(adapted.port(), equalTo(request.getEndpoint().getPort()));
     }
 
     @Test

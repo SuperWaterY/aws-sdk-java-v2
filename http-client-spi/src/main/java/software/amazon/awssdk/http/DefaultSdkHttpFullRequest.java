@@ -18,7 +18,6 @@ package software.amazon.awssdk.http;
 import static software.amazon.awssdk.utils.CollectionUtils.deepUnmodifiableMap;
 
 import java.io.InputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -37,9 +36,6 @@ import software.amazon.awssdk.utils.CollectionUtils;
 @SdkInternalApi
 @Immutable
 class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
-    @Deprecated
-    private final URI endpoint;
-
     private final String protocol;
     private final String host;
     private final Integer port;
@@ -50,7 +46,6 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
     private final InputStream content;
 
     private DefaultSdkHttpFullRequest(Builder builder) {
-        this.endpoint = builder.endpoint;
         this.protocol = builder.protocol;
         this.host = builder.host;
         this.port = builder.port;
@@ -92,11 +87,6 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
     }
 
     @Override
-    public URI endpoint() {
-        return endpoint;
-    }
-
-    @Override
     public SdkHttpMethod httpMethod() {
         return httpMethod;
     }
@@ -107,13 +97,15 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
     }
 
     @Override
-    public Builder toBuilder() {
+    public SdkHttpFullRequest.Builder toBuilder() {
         return new Builder()
-                .headers(headers)
+                .protocol(protocol)
+                .host(host)
+                .port(port)
                 .resourcePath(resourcePath)
-                .httpMethod(httpMethod)
-                .endpoint(endpoint)
                 .queryParameters(queryParameters)
+                .httpMethod(httpMethod)
+                .headers(headers)
                 .content(content);
     }
 
@@ -121,9 +113,6 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
      * Builder for a {@link DefaultSdkHttpFullRequest}.
      */
     static final class Builder implements SdkHttpFullRequest.Builder {
-
-        @Deprecated
-        private URI endpoint;
 
         private String protocol;
         private String host;
@@ -209,11 +198,6 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
         @Override
         public Map<String, List<String>> queryParameters() {
             return CollectionUtils.deepUnmodifiableMap(this.queryParameters);
-        }
-
-        @Override
-        public URI endpoint() {
-            return endpoint;
         }
 
         @Override

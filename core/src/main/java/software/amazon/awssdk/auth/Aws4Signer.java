@@ -21,7 +21,6 @@ import static software.amazon.awssdk.util.StringUtils.lowerCase;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +42,7 @@ import software.amazon.awssdk.interceptor.Context;
 import software.amazon.awssdk.interceptor.ExecutionAttributes;
 import software.amazon.awssdk.internal.collections.FifoCache;
 import software.amazon.awssdk.util.CredentialUtils;
-import software.amazon.awssdk.util.SdkHttpUtils;
+import software.amazon.awssdk.utils.http.SdkHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
 import software.amazon.awssdk.utils.BinaryUtils;
 
@@ -274,22 +273,17 @@ public class Aws4Signer extends AbstractAwsSigner
      */
     private String createCanonicalRequest(SdkHttpFullRequest.Builder request,
                                           String contentSha256) {
-        /* This would url-encode the resource path for the first time. */
-        final String path = SdkHttpUtils.appendUri(
-                request.endpoint().getPath(), request.resourcePath());
-
-        final String canonicalRequest = new StringBuilder(request.httpMethod().toString())
-                .append(SignerConstants.LINE_SEPARATOR)
-                // This would optionally double url-encode the resource path
-                .append(getCanonicalizedResourcePath(path, doubleUrlEncode))
-                .append(SignerConstants.LINE_SEPARATOR)
-                .append(getCanonicalizedQueryString(request.queryParameters()))
-                .append(SignerConstants.LINE_SEPARATOR)
-                .append(getCanonicalizedHeaderString(request))
-                .append(SignerConstants.LINE_SEPARATOR)
-                .append(getSignedHeadersString(request)).append(SignerConstants.LINE_SEPARATOR)
-                .append(contentSha256)
-                .toString();
+        final String canonicalRequest = request.httpMethod().toString() +
+                                        SignerConstants.LINE_SEPARATOR +
+                                        // This would optionally double url-encode the resource path
+                                        getCanonicalizedResourcePath(request.resourcePath(), doubleUrlEncode) +
+                                        SignerConstants.LINE_SEPARATOR +
+                                        getCanonicalizedQueryString(request.queryParameters()) +
+                                        SignerConstants.LINE_SEPARATOR +
+                                        getCanonicalizedHeaderString(request) +
+                                        SignerConstants.LINE_SEPARATOR +
+                                        getSignedHeadersString(request) + SignerConstants.LINE_SEPARATOR +
+                                        contentSha256;
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("AWS4 Canonical Request: '\"" + canonicalRequest + "\"");
@@ -465,11 +459,9 @@ public class Aws4Signer extends AbstractAwsSigner
         // AWS4 requires that we sign the Host header so we
         // have to have it in the request by the time we sign.
 
-        final URI endpoint = mutableRequest.endpoint();
-        final StringBuilder hostHeaderBuilder = new StringBuilder(
-                endpoint.getHost());
-        if (SdkHttpUtils.isUsingNonDefaultPort(endpoint)) {
-            hostHeaderBuilder.append(":").append(endpoint.getPort());
+        final StringBuilder hostHeaderBuilder = new StringBuilder(mutableRequest.host());
+        if (!SdkHttpUtils.isUsingStandardPort(mutableRequest.protocol(), mutableRequest.port())) {
+            hostHeaderBuilder.append(":").append(mutableRequest.port());
         }
 
         mutableRequest.header(SignerConstants.HOST, hostHeaderBuilder.toString());

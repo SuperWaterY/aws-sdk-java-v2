@@ -17,6 +17,7 @@ package software.amazon.awssdk.util;
 
 import org.junit.Assert;
 import org.junit.Test;
+import software.amazon.awssdk.utils.http.SdkHttpUtils;
 
 public class SdkHttpUtilsTest {
     @Test

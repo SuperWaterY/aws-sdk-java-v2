@@ -15,30 +15,24 @@
 
 package software.amazon.awssdk.http;
 
+import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.annotation.Immutable;
-import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkPublicApi;
+import software.amazon.awssdk.utils.http.SdkHttpUtils;
 
 @SdkPublicApi
 @Immutable
 public interface SdkHttpRequest extends SdkHttpHeaders {
-    /**
-     * Returns the service endpoint (ex: "https://ec2.amazonaws.com") to which
-     * this request should be sent.
-     *
-     * @return The service endpoint to which this request should be sent.
-     */
-    @Deprecated
-    URI endpoint();
 
     String protocol();
 
     String host();
 
-    Integer port();
+    Integer port(); // TODO: Return optional and then have a resolvePort that returns it based on protocol?
 
     /**
      * Returns the path to the resource being requested.
@@ -55,6 +49,11 @@ public interface SdkHttpRequest extends SdkHttpHeaders {
      * @return A map of all parameters in this request.
      */
     Map<String, List<String>> queryParameters();
+
+    default URI toUri() {
+        return invokeSafely(() -> new URI(protocol(), null, host(), port(), resourcePath(),
+                                          SdkHttpUtils.encodeQueryParameters(queryParameters()), null));
+    }
 
     /**
      * Returns the HTTP method (GET, POST, etc) to use when sending this

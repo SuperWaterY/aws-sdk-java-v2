@@ -31,6 +31,7 @@ import software.amazon.awssdk.auth.presign.PresignerParams;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.services.polly.model.SynthesizeSpeechRequest;
+import software.amazon.awssdk.utils.http.SdkHttpUtils;
 
 /**
  * Presigning extensions methods for {@link software.amazon.awssdk.services.polly.PollyClient}.
@@ -56,10 +57,13 @@ public final class PollyClientPresigners {
      */
     @ReviewBeforeRelease("Refactor as part of siging changes.")
     public URL getPresignedSynthesizeSpeechUrl(SynthesizeSpeechPresignRequest synthesizeSpeechPresignRequest) {
-        SdkHttpFullRequest.Builder request = SdkHttpFullRequest.builder()
-                                                               .endpoint(endpoint)
-                                                               .resourcePath("/v1/speech")
-                                                               .httpMethod(SdkHttpMethod.GET);
+        SdkHttpFullRequest.Builder request =
+                SdkHttpFullRequest.builder()
+                                  .protocol(endpoint.getScheme())
+                                  .host(endpoint.getHost())
+                                  .port(endpoint.getPort())
+                                  .resourcePath(SdkHttpUtils.appendUri(endpoint.getPath(), "/v1/speech"))
+                                  .httpMethod(SdkHttpMethod.GET);
         marshallIntoRequest(synthesizeSpeechPresignRequest, request);
         Date expirationDate = synthesizeSpeechPresignRequest.getExpirationDate() == null ?
                               getDefaultExpirationDate() : synthesizeSpeechPresignRequest.getExpirationDate();

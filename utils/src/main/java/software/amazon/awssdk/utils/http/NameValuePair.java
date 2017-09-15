@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.util;
+package software.amazon.awssdk.utils.http;
 
 /**
  * A name / value pair parameter used as an element of HTTP messages.

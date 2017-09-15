@@ -152,7 +152,8 @@ public class Aws4SignerTest {
                                  .header("Host", "demo.us-east-1.amazonaws.com")
                                  .header("x-amz-archive-description", "test  test")
                                  .resourcePath("/")
-                                 .endpoint(URI.create("http://demo.us-east-1.amazonaws.com"));
+                                 .protocol("http")
+                                 .host("demo.us-east-1.amazonaws.com");
     }
 
     private String getOldTimeStamp(Date date) {

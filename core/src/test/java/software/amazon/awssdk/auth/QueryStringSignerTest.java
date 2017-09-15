@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.net.URI;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -47,10 +46,11 @@ public class QueryStringSignerTest {
     @Test
     public void testRequestResourcePath() throws Exception {
         SdkHttpFullRequest request = SdkHttpFullRequest.builder()
-                                                       .httpMethod(SdkHttpMethod.POST)
-                                                       .endpoint(URI.create("http://foo.amazon.com"))
-                                                       .queryParameter("foo", "bar")
+                                                       .protocol("http")
+                                                       .host("foo.amazon.com")
                                                        .resourcePath("foo/bar")
+                                                       .httpMethod(SdkHttpMethod.POST)
+                                                       .queryParameter("foo", "bar")
                                                        .build();
 
         request = SignerTestUtils.signRequest(signer, request, credentials);
@@ -62,9 +62,10 @@ public class QueryStringSignerTest {
     public void testRequestAndEndpointResourcePath() throws Exception {
         SdkHttpFullRequest request = SdkHttpFullRequest.builder()
                                                        .httpMethod(SdkHttpMethod.POST)
-                                                       .endpoint(URI.create("http://foo.amazon.com/foo"))
+                                                       .protocol("http")
+                                                       .host("foo.amazon.com")
+                                                       .resourcePath("foo/bar")
                                                        .queryParameter("foo", "bar")
-                                                       .resourcePath("/bar")
                                                        .build();
 
         request = SignerTestUtils.signRequest(signer, request, credentials);
@@ -76,9 +77,10 @@ public class QueryStringSignerTest {
     public void testRequestAndEndpointResourcePathNoSlash() throws Exception {
         SdkHttpFullRequest request = SdkHttpFullRequest.builder()
                                                        .httpMethod(SdkHttpMethod.POST)
-                                                       .endpoint(URI.create("http://foo.amazon.com/foo"))
-                                                       .queryParameter("foo", "bar")
+                                                       .protocol("http")
+                                                       .host("foo.amazon.com")
                                                        .resourcePath("bar")
+                                                       .queryParameter("foo", "bar")
                                                        .build();
 
         request = SignerTestUtils.signRequest(signer, request, credentials);
@@ -90,9 +92,10 @@ public class QueryStringSignerTest {
     public void testAnonymous() throws Exception {
         SdkHttpFullRequest request = SdkHttpFullRequest.builder()
                                                        .httpMethod(SdkHttpMethod.POST)
-                                                       .endpoint(URI.create("http://foo.amazon.com"))
-                                                       .queryParameter("foo", "bar")
+                                                       .protocol("http")
+                                                       .host("foo.amazon.com")
                                                        .resourcePath("bar")
+                                                       .queryParameter("foo", "bar")
                                                        .build();
 
         request = SignerTestUtils.signRequest(signer, request, new AnonymousCredentialsProvider().getCredentials());

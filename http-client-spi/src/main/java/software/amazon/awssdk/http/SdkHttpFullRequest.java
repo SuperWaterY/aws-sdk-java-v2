@@ -18,7 +18,6 @@ package software.amazon.awssdk.http;
 import static java.util.Collections.singletonList;
 
 import java.io.InputStream;
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.annotation.Immutable;
@@ -63,6 +62,7 @@ public interface SdkHttpFullRequest
     interface Builder extends CopyableBuilder<Builder, SdkHttpFullRequest> {
         String protocol();
 
+        // TODO: Enum for supported protocols? Avoids capitalization issues
         Builder protocol(String protocol);
 
         String host();
@@ -152,28 +152,6 @@ public interface SdkHttpFullRequest
          * @return This builder for method chaining.
          */
         Builder clearQueryParameters();
-
-        /**
-         * Returns the service endpoint (ex: "https://ec2.amazonaws.com") to which
-         * this request should be sent.
-         *
-         * @return The service endpoint to which this request should be sent.
-         */
-        @Deprecated
-        URI endpoint();
-
-        /**
-         * Sets the endpoint for the builder.
-         *
-         * @param endpoint New endpoint.
-         * @return This builder for method chaining.
-         */
-        @Deprecated
-        default Builder endpoint(URI endpoint) {
-            return protocol(endpoint.getScheme())
-                    .host(endpoint.getHost())
-                    .port(endpoint.getPort());
-        }
 
         /**
          * Returns the HTTP method (GET, POST, etc) to use when sending this

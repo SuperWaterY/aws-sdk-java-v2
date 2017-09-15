@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.util.SdkHttpUtils;
+import software.amazon.awssdk.utils.http.SdkHttpUtils;
 
 /**
  * Adapts a {@link Request} to the new {@link SdkHttpFullRequest} interface.

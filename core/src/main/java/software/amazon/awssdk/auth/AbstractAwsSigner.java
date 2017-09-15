@@ -19,7 +19,6 @@ import static software.amazon.awssdk.handlers.AwsExecutionAttributes.REQUEST_CON
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -42,7 +41,7 @@ import software.amazon.awssdk.auth.internal.Aws4SignerRequestParams;
 import software.amazon.awssdk.event.ProgressInputStream;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.runtime.io.SdkDigestInputStream;
-import software.amazon.awssdk.util.SdkHttpUtils;
+import software.amazon.awssdk.utils.http.SdkHttpUtils;
 import software.amazon.awssdk.utils.Base64Utils;
 import software.amazon.awssdk.utils.BinaryUtils;
 import software.amazon.awssdk.utils.StringUtils;
@@ -299,8 +298,8 @@ public abstract class AbstractAwsSigner implements Signer {
         }
     }
 
-    protected String getCanonicalizedEndpoint(URI endpoint) {
-        String endpointForStringToSign = StringUtils.lowerCase(endpoint.getHost());
+    protected String getCanonicalizedEndpoint(SdkHttpFullRequest.Builder request) {
+        String endpointForStringToSign = StringUtils.lowerCase(request.host());
         /*
          * Apache HttpClient will omit the port in the Host header for default
          * port values (i.e. 80 for HTTP and 443 for HTTPS) even if we
@@ -308,8 +307,8 @@ public abstract class AbstractAwsSigner implements Signer {
          * value here when we calculate the string to sign and in the Host
          * header we send in the HTTP request.
          */
-        if (SdkHttpUtils.isUsingNonDefaultPort(endpoint)) {
-            endpointForStringToSign += ":" + endpoint.getPort();
+        if (!SdkHttpUtils.isUsingStandardPort(request.protocol(), request.port())) {
+            endpointForStringToSign += ":" + request.port();
         }
 
         return endpointForStringToSign;

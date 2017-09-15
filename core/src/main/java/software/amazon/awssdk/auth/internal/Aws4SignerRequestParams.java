@@ -109,7 +109,7 @@ public final class Aws4SignerRequestParams {
     @ReviewBeforeRelease("Specify region when creating signer rather then parsing from endpoint.")
     private String parseRegion(SdkHttpFullRequest.Builder request, String regionNameOverride) {
         return regionNameOverride != null ? regionNameOverride
-                : AwsHostNameUtils.parseRegionName(request.endpoint().getHost(), this.serviceName);
+                                          : AwsHostNameUtils.parseRegionName(request.host(), this.serviceName);
     }
 
     /**

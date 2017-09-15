@@ -57,8 +57,9 @@ public class QueueUrlInterceptor implements ExecutionInterceptor {
                     // If the URI has a host specified, set the request's endpoint to the queue URLs
                     // endpoint, so that queue URLs from different regions will send the request to
                     // the correct endpoint.
-                    URI uriWithoutPath = new URI(uri.toString().replace(uri.getPath(), ""));
-                    mutableRequest.endpoint(uriWithoutPath);
+                    mutableRequest.protocol(uri.getScheme())
+                                  .host(uri.getHost())
+                                  .port(uri.getPort());
                 }
                 return mutableRequest.build();
             } catch (URISyntaxException e) {

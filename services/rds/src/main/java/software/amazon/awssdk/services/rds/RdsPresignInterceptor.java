@@ -31,8 +31,7 @@ import software.amazon.awssdk.interceptor.InterceptorContext;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.runtime.endpoint.DefaultServiceEndpointBuilder;
 import software.amazon.awssdk.util.AwsHostNameUtils;
-import software.amazon.awssdk.util.SdkHttpUtils;
-import software.amazon.awssdk.utils.StringUtils;
+import software.amazon.awssdk.utils.http.SdkHttpUtils;
 
 /**
  * Abstract pre-sign handler that follows the pre-signing scheme outlined in the 'RDS Presigned URL for Cross-Region Copying'
@@ -90,15 +89,19 @@ abstract class RdsPresignInterceptor<T extends AmazonWebServiceRequest> implemen
             return request;
         }
 
-        String destinationRegion = AwsHostNameUtils.parseRegion(request.endpoint().getHost(), SERVICE_NAME);
+        String destinationRegion = AwsHostNameUtils.parseRegion(request.host(), SERVICE_NAME);
 
+        URI endpoint = createEndpoint(sourceRegion, SERVICE_NAME);
+        SdkHttpFullRequest.Builder marshalledRequest = presignableRequest.marshall();
         SdkHttpFullRequest requestToPresign =
-                presignableRequest.marshall()
-                                  .removeQueryParameter(PARAM_SOURCE_REGION)
-                                  .queryParameter(PARAM_DESTINATION_REGION, destinationRegion)
-                                  .httpMethod(SdkHttpMethod.GET)
-                                  .endpoint(createEndpoint(sourceRegion, SERVICE_NAME))
-                                  .build();
+                marshalledRequest.protocol(endpoint.getScheme())
+                                 .host(endpoint.getHost())
+                                 .port(endpoint.getPort())
+                                 .resourcePath(SdkHttpUtils.appendUri(endpoint.getPath(), marshalledRequest.resourcePath()))
+                                 .httpMethod(SdkHttpMethod.GET)
+                                 .queryParameter(PARAM_DESTINATION_REGION, destinationRegion)
+                                 .removeQueryParameter(PARAM_SOURCE_REGION)
+                                 .build();
 
         Context.BeforeTransmission contextToSign = InterceptorContext.builder()
                                                                      .request(context.request())
@@ -107,7 +110,7 @@ abstract class RdsPresignInterceptor<T extends AmazonWebServiceRequest> implemen
 
         requestToPresign = presignRequest(contextToSign, executionAttributes, sourceRegion);
 
-        final String presignedUrl = generateUrl(requestToPresign);
+        final String presignedUrl = requestToPresign.toUri().toString();
 
         presignableRequest.setPreSignedUrl(presignedUrl);
 
@@ -147,21 +150,6 @@ abstract class RdsPresignInterceptor<T extends AmazonWebServiceRequest> implemen
                 .withRegion(region)
                 .getServiceEndpoint();
     }
-
-    private String generateUrl(SdkHttpFullRequest request) {
-        URI endpoint = request.endpoint();
-        String uri = SdkHttpUtils.appendUri(endpoint.toString(),
-                                            request.resourcePath(), true);
-        String encodedParams = SdkHttpUtils.encodeQueryParameters(request.queryParameters());
-
-        if (!StringUtils.isEmpty(encodedParams)) {
-            uri += "?" + encodedParams;
-        }
-
-        return uri;
-
-    }
-
 }
 
 

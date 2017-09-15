@@ -26,7 +26,7 @@ import software.amazon.awssdk.handlers.AwsExecutionAttributes;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.http.pipeline.MutableRequestToRequestPipeline;
-import software.amazon.awssdk.util.SdkHttpUtils;
+import software.amazon.awssdk.utils.http.SdkHttpUtils;
 
 @ReviewBeforeRelease("Might only need to do this for certain protocols - ie query?")
 // TODO how is this going to work with streaming input posts in asyncland

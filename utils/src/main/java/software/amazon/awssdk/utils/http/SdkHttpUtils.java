@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.util;
+package software.amazon.awssdk.utils.http;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import software.amazon.awssdk.http.SdkHttpRequest;
+import software.amazon.awssdk.utils.StringUtils;
 
 public class SdkHttpUtils {
 
@@ -39,14 +39,13 @@ public class SdkHttpUtils {
     private static final Pattern ENCODED_CHARACTERS_PATTERN;
 
     static {
-        ENCODED_CHARACTERS_PATTERN = Pattern.compile(new StringBuilder()
-                                                             .append(Pattern.quote("+"))
-                                                             .append("|")
-                                                             .append(Pattern.quote("*"))
-                                                             .append("|")
-                                                             .append(Pattern.quote("%7E"))
-                                                             .append("|")
-                                                             .append(Pattern.quote("%2F")).toString());
+        ENCODED_CHARACTERS_PATTERN = Pattern.compile(Pattern.quote("+") +
+                                                     "|" +
+                                                     Pattern.quote("*") +
+                                                     "|" +
+                                                     Pattern.quote("%7E") +
+                                                     "|" +
+                                                     Pattern.quote("%2F"));
     }
 
     /**
@@ -116,28 +115,18 @@ public class SdkHttpUtils {
     }
 
     /**
-     * Returns true if the specified URI is using a non-standard port (i.e. any
-     * port other than 80 for HTTP URIs or any port other than 443 for HTTPS
-     * URIs).
+     * Returns true if the specified port is the standard port for the given protocol. (i.e. 80 for HTTP or 443 for HTTPS).
      *
-     * @return True if the specified URI is using a non-standard port, otherwise
-     * false.
+     * Null or -1 ports (to simplify interaction with {@link URI}'s default value) are treated as standard ports.
+     *
+     * @return True if the specified port is standard for the specified protocol, otherwise false.
      */
-    public static boolean isUsingNonDefaultPort(URI uri) {
-        String scheme = StringUtils.lowerCase(uri.getScheme());
-        int port = uri.getPort();
+    public static boolean isUsingStandardPort(String protocol, Integer port) {
+        String scheme = StringUtils.lowerCase(protocol);
 
-        if (port <= 0) {
-            return false;
-        }
-        if (scheme.equals("http") && port == 80) {
-            return false;
-        }
-        if (scheme.equals("https") && port == 443) {
-            return false;
-        }
-
-        return true;
+        return port == null || port == -1 ||
+               (scheme.equals("http") && port == 80) ||
+               (scheme.equals("https") && port == 443);
     }
 
     public static String encodeQueryParameters(Map<String, List<String>> queryParameters) {

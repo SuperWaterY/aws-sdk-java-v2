@@ -38,6 +38,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.runtime.endpoint.DefaultServiceEndpointBuilder;
 import software.amazon.awssdk.services.rds.model.CopyDBSnapshotRequest;
 import software.amazon.awssdk.services.rds.transform.CopyDBSnapshotRequestMarshaller;
+import software.amazon.awssdk.utils.http.SdkHttpUtils;
 
 /**
  * Unit Tests for {@link RdsPresignInterceptor}
@@ -144,10 +145,14 @@ public class PresignRequestHandlerTest {
 
     private SdkHttpFullRequest marshallRequest(CopyDBSnapshotRequest request) throws URISyntaxException {
         SdkHttpFullRequest marshalled = SdkHttpFullRequestAdapter.toHttpFullRequest(marshaller.marshall(request));
+        URI endpoint = new DefaultServiceEndpointBuilder("rds", Protocol.HTTPS.toString())
+                          .withRegion(DESTINATION_REGION)
+                          .getServiceEndpoint();
         return marshalled.toBuilder()
-                         .endpoint(new DefaultServiceEndpointBuilder("rds", Protocol.HTTPS.toString())
-                                           .withRegion(DESTINATION_REGION)
-                                           .getServiceEndpoint())
+                         .protocol(endpoint.getScheme())
+                         .host(endpoint.getHost())
+                         .port(endpoint.getPort())
+                         .resourcePath(SdkHttpUtils.appendUri(endpoint.getPath(), marshalled.resourcePath()))
                          .build();
     }
 

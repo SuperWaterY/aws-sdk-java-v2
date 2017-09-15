@@ -15,38 +15,24 @@
 
 package software.amazon.awssdk.http.nio.netty.internal;
 
-import static software.amazon.awssdk.utils.StringUtils.isNotBlank;
-
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpVersion;
-import io.netty.handler.codec.http.QueryStringEncoder;
 import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.http.SdkHttpRequest;
 
 public final class RequestAdapter {
 
     public HttpRequest adapt(SdkHttpRequest sdkRequest) {
-        String uri = uriFrom(sdkRequest);
+        String uri = sdkRequest.toUri().toString();
         HttpMethod method = toNettyHttpMethod(sdkRequest.httpMethod());
         HttpHeaders headers = new DefaultHttpHeaders();
         DefaultHttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, method, uri, headers);
         sdkRequest.headers().forEach(request.headers()::add);
         return request;
-    }
-
-    private String uriFrom(SdkHttpRequest sdkRequest) {
-        StringBuilder uriBuilder = new StringBuilder(sdkRequest.endpoint().toString());
-        if (isNotBlank(sdkRequest.resourcePath())) {
-            uriBuilder.append(sdkRequest.resourcePath());
-        }
-
-        QueryStringEncoder encoder = new QueryStringEncoder(uriBuilder.toString());
-        sdkRequest.queryParameters().forEach((k, values) -> values.forEach(v -> encoder.addParam(k, v)));
-        return encoder.toString();
     }
 
     private static HttpMethod toNettyHttpMethod(SdkHttpMethod method) {

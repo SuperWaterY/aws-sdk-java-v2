@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.services.sqs.internal;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
@@ -42,16 +41,11 @@ public class SqsExecutionInterceptor implements ExecutionInterceptor {
     @Override
     public SdkHttpFullRequest modifyHttpRequest(Context.ModifyHttpRequest context, ExecutionAttributes executionAttributes) {
         SdkHttpFullRequest request = context.httpRequest();
-        URI endpoint = request.endpoint();
 
         // If the request is using a non-standard endpoint, then
         // alter it to use the corresponding, standard endpoint
-        if (NONSTANDARD_ENDPOINT_MAP.containsKey(endpoint.getHost())) {
-            String newHost = NONSTANDARD_ENDPOINT_MAP.get(endpoint.getHost());
-            String newEndpoint = endpoint.toString().replaceFirst(endpoint.getHost(), newHost);
-            return request.toBuilder()
-                          .endpoint(URI.create(newEndpoint))
-                          .build();
+        if (NONSTANDARD_ENDPOINT_MAP.containsKey(request.host())) {
+            return request.copy(r -> r.host(NONSTANDARD_ENDPOINT_MAP.get(request.host())));
         }
         return request;
     }

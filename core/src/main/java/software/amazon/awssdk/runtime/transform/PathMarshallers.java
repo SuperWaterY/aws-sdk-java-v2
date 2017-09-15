@@ -20,7 +20,7 @@ import static software.amazon.awssdk.util.ValidationUtils.assertStringNotEmpty;
 
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.util.IdempotentUtils;
-import software.amazon.awssdk.util.SdkHttpUtils;
+import software.amazon.awssdk.utils.http.SdkHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
 
 @SdkProtectedApi
