@@ -26,6 +26,21 @@ import software.amazon.awssdk.annotation.SdkPublicApi;
 @Immutable
 public interface SdkHttpRequest extends SdkHttpHeaders {
     /**
+     * Returns the service endpoint (ex: "https://ec2.amazonaws.com") to which
+     * this request should be sent.
+     *
+     * @return The service endpoint to which this request should be sent.
+     */
+    @Deprecated
+    URI endpoint();
+
+    String protocol();
+
+    String host();
+
+    Integer port();
+
+    /**
      * Returns the path to the resource being requested.
      *
      * @return The path to the resource being requested.
@@ -40,14 +55,6 @@ public interface SdkHttpRequest extends SdkHttpHeaders {
      * @return A map of all parameters in this request.
      */
     Map<String, List<String>> queryParameters();
-
-    /**
-     * Returns the service endpoint (ex: "https://ec2.amazonaws.com") to which
-     * this request should be sent.
-     *
-     * @return The service endpoint to which this request should be sent.
-     */
-    URI endpoint();
 
     /**
      * Returns the HTTP method (GET, POST, etc) to use when sending this

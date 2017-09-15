@@ -37,21 +37,43 @@ import software.amazon.awssdk.utils.CollectionUtils;
 @SdkInternalApi
 @Immutable
 class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
+    @Deprecated
+    private final URI endpoint;
 
-    private final Map<String, List<String>> headers;
+    private final String protocol;
+    private final String host;
+    private final Integer port;
     private final String resourcePath;
     private final Map<String, List<String>> queryParameters;
-    private final URI endpoint;
     private final SdkHttpMethod httpMethod;
+    private final Map<String, List<String>> headers;
     private final InputStream content;
 
     private DefaultSdkHttpFullRequest(Builder builder) {
-        this.headers = deepUnmodifiableMap(builder.headers, () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
-        this.queryParameters = deepUnmodifiableMap(builder.queryParameters, () -> new LinkedHashMap<>());
-        this.resourcePath = builder.resourcePath;
         this.endpoint = builder.endpoint;
+        this.protocol = builder.protocol;
+        this.host = builder.host;
+        this.port = builder.port;
+        this.resourcePath = builder.resourcePath;
+        this.queryParameters = deepUnmodifiableMap(builder.queryParameters, () -> new LinkedHashMap<>());
         this.httpMethod = builder.httpMethod;
+        this.headers = deepUnmodifiableMap(builder.headers, () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
         this.content = builder.content;
+    }
+
+    @Override
+    public String protocol() {
+        return protocol;
+    }
+
+    @Override
+    public String host() {
+        return host;
+    }
+
+    @Override
+    public Integer port() {
+        return port;
     }
 
     @Override
@@ -100,32 +122,53 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
      */
     static final class Builder implements SdkHttpFullRequest.Builder {
 
-        private Map<String, List<String>> headers = new HashMap<>();
+        @Deprecated
+        private URI endpoint;
+
+        private String protocol;
+        private String host;
+        private Integer port;
         private String resourcePath;
         @ReviewBeforeRelease("Do we need linked hash map here?")
         private Map<String, List<String>> queryParameters = new LinkedHashMap<>();
-        private URI endpoint;
         private SdkHttpMethod httpMethod;
+        private Map<String, List<String>> headers = new HashMap<>();
         private InputStream content;
 
         Builder() {
         }
 
         @Override
-        public DefaultSdkHttpFullRequest.Builder header(String key, List<String> values) {
-            this.headers.put(key, new ArrayList<>(values));
+        public String protocol() {
+            return protocol;
+        }
+
+        @Override
+        public SdkHttpFullRequest.Builder protocol(String protocol) {
+            this.protocol = protocol;
             return this;
         }
 
         @Override
-        public DefaultSdkHttpFullRequest.Builder headers(Map<String, List<String>> headers) {
-            this.headers = CollectionUtils.deepCopyMap(headers);
+        public String host() {
+            return host;
+        }
+
+        @Override
+        public SdkHttpFullRequest.Builder host(String host) {
+            this.host = host;
             return this;
         }
 
         @Override
-        public Map<String, List<String>> headers() {
-            return CollectionUtils.deepUnmodifiableMap(this.headers);
+        public Integer port() {
+            return port;
+        }
+
+        @Override
+        public SdkHttpFullRequest.Builder port(Integer port) {
+            this.port = port;
+            return this;
         }
 
         @Override
@@ -136,7 +179,7 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
 
         @Override
         public String resourcePath() {
-            return this.resourcePath;
+            return resourcePath;
         }
 
         @Override
@@ -169,14 +212,8 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
         }
 
         @Override
-        public DefaultSdkHttpFullRequest.Builder endpoint(URI endpoint) {
-            this.endpoint = endpoint;
-            return this;
-        }
-
-        @Override
         public URI endpoint() {
-            return this.endpoint;
+            return endpoint;
         }
 
         @Override
@@ -187,7 +224,24 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
 
         @Override
         public SdkHttpMethod httpMethod() {
-            return this.httpMethod;
+            return httpMethod;
+        }
+
+        @Override
+        public DefaultSdkHttpFullRequest.Builder header(String key, List<String> values) {
+            this.headers.put(key, new ArrayList<>(values));
+            return this;
+        }
+
+        @Override
+        public DefaultSdkHttpFullRequest.Builder headers(Map<String, List<String>> headers) {
+            this.headers = CollectionUtils.deepCopyMap(headers);
+            return this;
+        }
+
+        @Override
+        public Map<String, List<String>> headers() {
+            return CollectionUtils.deepUnmodifiableMap(this.headers);
         }
 
         @Override
@@ -198,7 +252,7 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
 
         @Override
         public InputStream content() {
-            return this.content;
+            return content;
         }
 
         /**

@@ -61,54 +61,17 @@ public interface SdkHttpFullRequest
     @ReviewBeforeRelease("Extending SdkHttpRequest is dangerous, because this is mutable, but it's expected that "
                          + "requests aren't.")
     interface Builder extends CopyableBuilder<Builder, SdkHttpFullRequest> {
-        /**
-         * Returns the HTTP headers returned with this object.
-         * <br/>
-         * Should never be null, if there are no headers an empty map is returned
-         *
-         * @return The HTTP headers.
-         */
-        Map<String, List<String>> headers();
+        String protocol();
 
-        /**
-         * Adds the headers to the builder.
-         *
-         * <p>>Note that this does not merge with any values that may be pre-existing for that header,  it does a complete
-         * overwrite of each header key in the map. Merging must be handled by the caller if desired.
-         * </p>
-         *
-         * @param headers Headers to add
-         * @return This builder for method chaining.
-         */
-        Builder headers(Map<String, List<String>> headers);
+        Builder protocol(String protocol);
 
-        /**
-         * Adds the header to the builder.
-         *
-         * <p>>Note that this does not merge with any values that may be pre-existing for that header,  it does a complete
-         * overwrite of this header key. Merging must be handled by the caller if desired.
-         * </p>
-         *
-         * @param key   Header name
-         * @param value Header value
-         * @return This builder for method chaining.
-         */
-        default Builder header(String key, String value) {
-            return header(key, singletonList(value));
-        }
+        String host();
 
-        /**
-         * Adds the header values to the builder.
-         *
-         * <p>>Note that this does not merge with any values that may be pre-existing for that header,  it does a complete
-         * overwrite of this header key. Merging must be handled by the caller if desired.
-         * </p>
-         *
-         * @param key    Header name
-         * @param values List of values associated with this header key.
-         * @return This builder for method chaining.
-         */
-        Builder header(String key, List<String> values);
+        Builder host(String host);
+
+        Integer port();
+
+        Builder port(Integer port);
 
         /**
          * Returns the path to the resource being requested.
@@ -196,6 +159,7 @@ public interface SdkHttpFullRequest
          *
          * @return The service endpoint to which this request should be sent.
          */
+        @Deprecated
         URI endpoint();
 
         /**
@@ -204,7 +168,12 @@ public interface SdkHttpFullRequest
          * @param endpoint New endpoint.
          * @return This builder for method chaining.
          */
-        Builder endpoint(URI endpoint);
+        @Deprecated
+        default Builder endpoint(URI endpoint) {
+            return protocol(endpoint.getScheme())
+                    .host(endpoint.getHost())
+                    .port(endpoint.getPort());
+        }
 
         /**
          * Returns the HTTP method (GET, POST, etc) to use when sending this
@@ -221,6 +190,55 @@ public interface SdkHttpFullRequest
          * @return This builder for method chaining.
          */
         Builder httpMethod(SdkHttpMethod httpMethod);
+
+        /**
+         * Returns the HTTP headers returned with this object.
+         * <br/>
+         * Should never be null, if there are no headers an empty map is returned
+         *
+         * @return The HTTP headers.
+         */
+        Map<String, List<String>> headers();
+
+        /**
+         * Adds the headers to the builder.
+         *
+         * <p>>Note that this does not merge with any values that may be pre-existing for that header,  it does a complete
+         * overwrite of each header key in the map. Merging must be handled by the caller if desired.
+         * </p>
+         *
+         * @param headers Headers to add
+         * @return This builder for method chaining.
+         */
+        Builder headers(Map<String, List<String>> headers);
+
+        /**
+         * Adds the header to the builder.
+         *
+         * <p>>Note that this does not merge with any values that may be pre-existing for that header,  it does a complete
+         * overwrite of this header key. Merging must be handled by the caller if desired.
+         * </p>
+         *
+         * @param key   Header name
+         * @param value Header value
+         * @return This builder for method chaining.
+         */
+        default Builder header(String key, String value) {
+            return header(key, singletonList(value));
+        }
+
+        /**
+         * Adds the header values to the builder.
+         *
+         * <p>>Note that this does not merge with any values that may be pre-existing for that header,  it does a complete
+         * overwrite of this header key. Merging must be handled by the caller if desired.
+         * </p>
+         *
+         * @param key    Header name
+         * @param values List of values associated with this header key.
+         * @return This builder for method chaining.
+         */
+        Builder header(String key, List<String> values);
 
         /**
          * Sets the HTTP content for the builder.
