@@ -32,14 +32,17 @@ public interface SdkHttpRequest extends SdkHttpHeaders {
 
     String host();
 
-    Integer port(); // TODO: Return optional and then have a resolvePort that returns it based on protocol?
+    int port(); // TODO: never null?
 
     /**
      * Returns the path to the resource being requested.
+     * <br />
+     * If this is non-blank, the path will always start with '/' and end without '/' (eg. "/path").
+     * If no path is specified, this will always return "".
      *
      * @return The path to the resource being requested.
      */
-    String resourcePath();
+    String path();
 
     /**
      * Returns a map of all parameters in this request.
@@ -51,7 +54,7 @@ public interface SdkHttpRequest extends SdkHttpHeaders {
     Map<String, List<String>> queryParameters();
 
     default URI toUri() {
-        return invokeSafely(() -> new URI(protocol(), null, host(), port(), resourcePath(),
+        return invokeSafely(() -> new URI(protocol(), null, host(), port(), path(),
                                           SdkHttpUtils.encodeQueryParameters(queryParameters()), null));
     }
 
@@ -61,5 +64,5 @@ public interface SdkHttpRequest extends SdkHttpHeaders {
      *
      * @return The HTTP method to use when sending this request.
      */
-    SdkHttpMethod httpMethod();
+    SdkHttpMethod method();
 }

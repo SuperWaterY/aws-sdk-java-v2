@@ -48,8 +48,8 @@ public class QueryStringSignerTest {
         SdkHttpFullRequest request = SdkHttpFullRequest.builder()
                                                        .protocol("http")
                                                        .host("foo.amazon.com")
-                                                       .resourcePath("foo/bar")
-                                                       .httpMethod(SdkHttpMethod.POST)
+                                                       .path("foo/bar")
+                                                       .method(SdkHttpMethod.POST)
                                                        .queryParameter("foo", "bar")
                                                        .build();
 
@@ -61,10 +61,10 @@ public class QueryStringSignerTest {
     @Test
     public void testRequestAndEndpointResourcePath() throws Exception {
         SdkHttpFullRequest request = SdkHttpFullRequest.builder()
-                                                       .httpMethod(SdkHttpMethod.POST)
+                                                       .method(SdkHttpMethod.POST)
                                                        .protocol("http")
                                                        .host("foo.amazon.com")
-                                                       .resourcePath("foo/bar")
+                                                       .path("foo/bar")
                                                        .queryParameter("foo", "bar")
                                                        .build();
 
@@ -76,10 +76,10 @@ public class QueryStringSignerTest {
     @Test
     public void testRequestAndEndpointResourcePathNoSlash() throws Exception {
         SdkHttpFullRequest request = SdkHttpFullRequest.builder()
-                                                       .httpMethod(SdkHttpMethod.POST)
+                                                       .method(SdkHttpMethod.POST)
                                                        .protocol("http")
                                                        .host("foo.amazon.com")
-                                                       .resourcePath("bar")
+                                                       .path("bar")
                                                        .queryParameter("foo", "bar")
                                                        .build();
 
@@ -91,10 +91,10 @@ public class QueryStringSignerTest {
     @Test
     public void testAnonymous() throws Exception {
         SdkHttpFullRequest request = SdkHttpFullRequest.builder()
-                                                       .httpMethod(SdkHttpMethod.POST)
+                                                       .method(SdkHttpMethod.POST)
                                                        .protocol("http")
                                                        .host("foo.amazon.com")
-                                                       .resourcePath("bar")
+                                                       .path("bar")
                                                        .queryParameter("foo", "bar")
                                                        .build();
 

@@ -51,7 +51,7 @@ public class QueueUrlInterceptor implements ExecutionInterceptor {
             try {
                 URI uri = new URI(queueUrl);
                 SdkHttpFullRequest.Builder mutableRequest = request.toBuilder();
-                mutableRequest.resourcePath(uri.getPath());
+                mutableRequest.path(uri.getPath());
 
                 if (uri.getHost() != null) {
                     // If the URI has a host specified, set the request's endpoint to the queue URLs

@@ -28,7 +28,7 @@ public final class RequestAdapter {
 
     public HttpRequest adapt(SdkHttpRequest sdkRequest) {
         String uri = sdkRequest.toUri().toString();
-        HttpMethod method = toNettyHttpMethod(sdkRequest.httpMethod());
+        HttpMethod method = toNettyHttpMethod(sdkRequest.method());
         HttpHeaders headers = new DefaultHttpHeaders();
         DefaultHttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, method, uri, headers);
         sdkRequest.headers().forEach(request.headers()::add);

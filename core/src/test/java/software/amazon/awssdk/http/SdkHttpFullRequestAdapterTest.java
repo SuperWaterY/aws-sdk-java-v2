@@ -60,9 +60,9 @@ public class SdkHttpFullRequestAdapterTest {
 
         SdkHttpFullRequest adapted = SdkHttpFullRequestAdapter.toHttpFullRequest(request);
 
-        assertThat(adapted.protocol(), equalTo(request.getEndpoint().getScheme()));
-        assertThat(adapted.host(), equalTo(request.getEndpoint().getHost()));
-        assertThat(adapted.port(), equalTo(request.getEndpoint().getPort()));
+        assertThat(adapted.protocol(), equalTo("http"));
+        assertThat(adapted.host(), equalTo("shorea.com"));
+        assertThat(adapted.port(), equalTo(80));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class SdkHttpFullRequestAdapterTest {
 
         SdkHttpFullRequest adapted = SdkHttpFullRequestAdapter.toHttpFullRequest(request);
 
-        assertThat(adapted.resourcePath(), equalTo("/foo/bar"));
+        assertThat(adapted.path(), equalTo("/foo/bar"));
     }
 
     @Test
@@ -104,7 +104,7 @@ public class SdkHttpFullRequestAdapterTest {
 
         SdkHttpFullRequest adapted = SdkHttpFullRequestAdapter.toHttpFullRequest(request);
 
-        assertThat(adapted.httpMethod(), equalTo(SdkHttpMethod.GET));
+        assertThat(adapted.method(), equalTo(SdkHttpMethod.GET));
     }
 
     @Test

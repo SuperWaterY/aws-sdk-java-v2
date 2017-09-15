@@ -129,6 +129,16 @@ public class SdkHttpUtils {
                (scheme.equals("https") && port == 443);
     }
 
+    public static int standardPort(String protocol) {
+        if (protocol.equalsIgnoreCase("http")) {
+            return 80;
+        } else if (protocol.equalsIgnoreCase("https")) {
+            return 443;
+        } else {
+            throw new IllegalStateException("Unknown protocol: " + protocol);
+        }
+    }
+
     public static String encodeQueryParameters(Map<String, List<String>> queryParameters) {
 
         if (queryParameters.isEmpty()) {

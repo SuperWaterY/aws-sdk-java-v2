@@ -42,7 +42,7 @@ public final class MoveParametersToBodyStage implements MutableRequestToRequestP
     private boolean shouldPutParamsInBody(SdkHttpFullRequest.Builder input,
                                           RequestExecutionContext context) {
         return notSimpleDb(context) &&
-               input.httpMethod() == SdkHttpMethod.POST &&
+               input.method() == SdkHttpMethod.POST &&
                input.content() == null &&
                input.queryParameters() != null &&
                input.queryParameters().size() > 0;

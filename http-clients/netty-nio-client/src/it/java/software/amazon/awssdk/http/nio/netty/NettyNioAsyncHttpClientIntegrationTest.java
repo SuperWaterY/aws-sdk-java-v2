@@ -308,8 +308,8 @@ public class NettyNioAsyncHttpClientIntegrationTest {
         when(request.host()).thenReturn(uri.getHost());
         when(request.protocol()).thenReturn(uri.getScheme());
         when(request.port()).thenReturn(uri.getPort());
-        when(request.httpMethod()).thenReturn(method);
-        when(request.resourcePath()).thenReturn(resourcePath);
+        when(request.method()).thenReturn(method);
+        when(request.path()).thenReturn(resourcePath);
         when(request.queryParameters()).thenReturn(params.entrySet()
                                                          .stream()
                                                          .collect(toMap(Entry::getKey, e -> singletonList(e.getValue()))));

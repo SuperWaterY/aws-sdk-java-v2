@@ -48,7 +48,7 @@ public class PredictEndpointInterceptor implements ExecutionInterceptor {
                               .protocol(endpoint.getScheme())
                               .host(endpoint.getHost())
                               .port(endpoint.getPort())
-                              .resourcePath(SdkHttpUtils.appendUri(endpoint.getPath(), request.resourcePath()))
+                              .path(SdkHttpUtils.appendUri(endpoint.getPath(), request.path()))
                               .build();
             } catch (URISyntaxException e) {
                 throw new AmazonClientException("Unable to parse PredictRequest.PredictEndpoint", e);

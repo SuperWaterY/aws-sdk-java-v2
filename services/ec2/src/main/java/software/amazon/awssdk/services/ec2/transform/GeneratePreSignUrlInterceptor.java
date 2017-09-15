@@ -77,7 +77,7 @@ public class GeneratePreSignUrlInterceptor implements ExecutionInterceptor {
                     .protocol(endPointSource.getScheme())
                     .host(endPointSource.getHost())
                     .port(endPointSource.getPort())
-                    .httpMethod(SdkHttpMethod.GET)
+                    .method(SdkHttpMethod.GET)
                     .build();
 
             Aws4Signer signer = new Aws4Signer();

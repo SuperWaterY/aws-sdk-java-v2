@@ -88,7 +88,7 @@ final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
                                 .channel(resolveSocketChannelClass())
                                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, serviceDefaults.getConnectionTimeout())
                                 .option(ChannelOption.TCP_NODELAY, true)
-                                .remoteAddress(key.getHost(), port(key.getScheme(), key.getPort()));
+                                .remoteAddress(key.getHost(), key.getPort());
                 SslContext sslContext = sslContext(key.getScheme());
                 return new FixedChannelPool(bootstrap,
                                             // TODO expose better options for this
@@ -135,11 +135,7 @@ final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
 
     private static URI poolKey(SdkHttpRequest sdkRequest) {
         return invokeSafely(() -> new URI(sdkRequest.protocol(), null, sdkRequest.host(),
-                                          port(sdkRequest.protocol(), sdkRequest.port()), null, null, null));
-    }
-
-    private static int port(String protocol, Integer port) {
-        return port != null && port != -1 ? port : protocol.equalsIgnoreCase("https") ? 443 : 80;
+                                          sdkRequest.port(), null, null, null));
     }
 
     private SslContext sslContext(String scheme) {

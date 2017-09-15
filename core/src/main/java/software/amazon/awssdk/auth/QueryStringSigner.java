@@ -92,7 +92,7 @@ public class QueryStringSigner extends AbstractAwsSigner {
     }
 
     private String getCanonicalizedResourcePath(SdkHttpFullRequest.Builder request) {
-        String resourcePath = request.resourcePath() == null ? "" : request.resourcePath(); // TODO: Optional? Empty always?
+        String resourcePath = request.path() == null ? "" : request.path(); // TODO: Optional? Empty always?
 
         if (resourcePath.startsWith("//")) {
             return resourcePath.substring(1);

@@ -62,8 +62,8 @@ public final class PollyClientPresigners {
                                   .protocol(endpoint.getScheme())
                                   .host(endpoint.getHost())
                                   .port(endpoint.getPort())
-                                  .resourcePath(SdkHttpUtils.appendUri(endpoint.getPath(), "/v1/speech"))
-                                  .httpMethod(SdkHttpMethod.GET);
+                                  .path(SdkHttpUtils.appendUri(endpoint.getPath(), "/v1/speech"))
+                                  .method(SdkHttpMethod.GET);
         marshallIntoRequest(synthesizeSpeechPresignRequest, request);
         Date expirationDate = synthesizeSpeechPresignRequest.getExpirationDate() == null ?
                               getDefaultExpirationDate() : synthesizeSpeechPresignRequest.getExpirationDate();

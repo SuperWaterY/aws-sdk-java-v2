@@ -38,7 +38,7 @@ public class MoveParametersToBodyStageTest {
     public void postRequestsWithNoBodyHaveTheirParametersMovedToTheBody() throws Exception {
         SdkHttpFullRequest.Builder mutableRequest = SdkHttpFullRequest.builder()
                                                                       .content(null)
-                                                                      .httpMethod(SdkHttpMethod.POST)
+                                                                      .method(SdkHttpMethod.POST)
                                                                       .queryParameter("key", singletonList("value"));
 
         SdkHttpFullRequest output = sut.execute(mutableRequest, requestContext(mutableRequest)).build();
@@ -62,7 +62,7 @@ public class MoveParametersToBodyStageTest {
         InputStream content = new ByteArrayInputStream("hello".getBytes(StandardCharsets.UTF_8));
         SdkHttpFullRequest.Builder mutableRequest = SdkHttpFullRequest.builder()
                                                                       .content(content)
-                                                                      .httpMethod(SdkHttpMethod.POST)
+                                                                      .method(SdkHttpMethod.POST)
                                                                       .queryParameter("key", singletonList("value"));
 
         SdkHttpFullRequest output = sut.execute(mutableRequest, requestContext(mutableRequest)).build();
@@ -76,7 +76,7 @@ public class MoveParametersToBodyStageTest {
     public void onlyAlterRequestsIfParamsArePresent() throws Exception {
         SdkHttpFullRequest.Builder mutableRequest = SdkHttpFullRequest.builder()
                                                                       .content(null)
-                                                                      .httpMethod(SdkHttpMethod.POST);
+                                                                      .method(SdkHttpMethod.POST);
 
         SdkHttpFullRequest output = sut.execute(mutableRequest, requestContext(mutableRequest)).build();
 
@@ -88,7 +88,7 @@ public class MoveParametersToBodyStageTest {
     private void nonPostRequestsUnaltered(SdkHttpMethod method) {
         SdkHttpFullRequest.Builder mutableRequest = SdkHttpFullRequest.builder()
                                                                       .content(null)
-                                                                      .httpMethod(method)
+                                                                      .method(method)
                                                                       .queryParameter("key", singletonList("value"));
 
         SdkHttpFullRequest output = sut.execute(mutableRequest, requestContext(mutableRequest)).build();

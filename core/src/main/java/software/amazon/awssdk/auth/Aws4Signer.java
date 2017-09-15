@@ -273,10 +273,10 @@ public class Aws4Signer extends AbstractAwsSigner
      */
     private String createCanonicalRequest(SdkHttpFullRequest.Builder request,
                                           String contentSha256) {
-        final String canonicalRequest = request.httpMethod().toString() +
+        final String canonicalRequest = request.method().toString() +
                                         SignerConstants.LINE_SEPARATOR +
                                         // This would optionally double url-encode the resource path
-                                        getCanonicalizedResourcePath(request.resourcePath(), doubleUrlEncode) +
+                                        getCanonicalizedResourcePath(request.path(), doubleUrlEncode) +
                                         SignerConstants.LINE_SEPARATOR +
                                         getCanonicalizedQueryString(request.queryParameters()) +
                                         SignerConstants.LINE_SEPARATOR +

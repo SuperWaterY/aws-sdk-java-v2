@@ -152,7 +152,7 @@ public class PresignRequestHandlerTest {
                          .protocol(endpoint.getScheme())
                          .host(endpoint.getHost())
                          .port(endpoint.getPort())
-                         .resourcePath(SdkHttpUtils.appendUri(endpoint.getPath(), marshalled.resourcePath()))
+                         .path(SdkHttpUtils.appendUri(endpoint.getPath(), marshalled.path()))
                          .build();
     }
 

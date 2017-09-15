@@ -55,7 +55,7 @@ public class EndpointAddressInterceptor implements ExecutionInterceptor {
         mutableRequest.protocol(endpoint.getScheme())
                       .host(endpoint.getHost())
                       .port(endpoint.getPort())
-                      .resourcePath(SdkHttpUtils.appendUri(endpoint.getPath(), mutableRequest.resourcePath()));
+                      .path(SdkHttpUtils.appendUri(endpoint.getPath(), mutableRequest.path()));
 
         if (advancedConfiguration == null || !advancedConfiguration.pathStyleAccessEnabled()) {
             try {
@@ -150,9 +150,9 @@ public class EndpointAddressInterceptor implements ExecutionInterceptor {
     private void changeToDnsEndpoint(SdkHttpFullRequest.Builder mutableRequest, String bucketName) {
         if (mutableRequest.host().startsWith("s3")) {
             String newHost = mutableRequest.host().replaceFirst("s3", bucketName + "." + "s3");
-            String newPath = mutableRequest.resourcePath().replaceFirst("/" + bucketName, "");
+            String newPath = mutableRequest.path().replaceFirst("/" + bucketName, "");
 
-            mutableRequest.host(newHost).resourcePath(newPath);
+            mutableRequest.host(newHost).path(newPath);
         }
     }
 }

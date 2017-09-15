@@ -64,7 +64,7 @@ final class UrlConnectionHttpClient implements SdkHttpClient {
     private HttpURLConnection createAndConfigureConnection(SdkHttpFullRequest request) {
         HttpURLConnection connection = invokeSafely(() -> (HttpURLConnection) request.toUri().toURL().openConnection());
         request.headers().forEach((key, values) -> values.forEach(value -> connection.setRequestProperty(key, value)));
-        invokeSafely(() -> connection.setRequestMethod(request.httpMethod().name()));
+        invokeSafely(() -> connection.setRequestMethod(request.method().name()));
         if (request.content() != null) {
             connection.setDoOutput(true);
         }

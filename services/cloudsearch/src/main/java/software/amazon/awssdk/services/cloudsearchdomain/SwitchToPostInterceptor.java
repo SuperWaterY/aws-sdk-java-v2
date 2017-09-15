@@ -32,10 +32,10 @@ public class SwitchToPostInterceptor implements ExecutionInterceptor {
     public SdkHttpFullRequest modifyHttpRequest(Context.ModifyHttpRequest context, ExecutionAttributes executionAttributes) {
         SdkHttpFullRequest request = context.httpRequest();
         Object originalRequest = context.request();
-        if (originalRequest instanceof SearchRequest && request.httpMethod() == SdkHttpMethod.GET) {
+        if (originalRequest instanceof SearchRequest && request.method() == SdkHttpMethod.GET) {
             final byte[] content = SdkHttpUtils.encodeQueryParameters(request.queryParameters()).getBytes();
             return request.toBuilder()
-                          .httpMethod(SdkHttpMethod.POST)
+                          .method(SdkHttpMethod.POST)
                           .content(new ByteArrayInputStream(content))
                           .header("Content-Type", "application/x-www-form-urlencoded")
                           .header("Content-Length", Integer.toString(content.length))

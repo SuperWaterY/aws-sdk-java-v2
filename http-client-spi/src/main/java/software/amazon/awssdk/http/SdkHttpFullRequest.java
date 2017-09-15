@@ -20,6 +20,7 @@ import static java.util.Collections.singletonList;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkPublicApi;
@@ -52,7 +53,7 @@ public interface SdkHttpFullRequest
      * @return The optional stream containing the payload data to include for this request or null if there is no payload.
      */
     @ReviewBeforeRelease("Optional instead of null?")
-    InputStream content();
+    Optional<InputStream> content();
 
     /**
      * Builder interface for {@link SdkHttpFullRequest}.
@@ -78,15 +79,15 @@ public interface SdkHttpFullRequest
          *
          * @return The path to the resource being requested.
          */
-        String resourcePath();
+        String path();
 
         /**
          * Sets the resource path on the builder.
          *
-         * @param resourcePath New resource path.
+         * @param path New resource path.
          * @return This builder for method chaining.
          */
-        Builder resourcePath(String resourcePath);
+        Builder path(String path);
 
         /**
          * Returns a map of all parameters in this request.
@@ -159,7 +160,7 @@ public interface SdkHttpFullRequest
          *
          * @return The HTTP method to use when sending this request.
          */
-        SdkHttpMethod httpMethod();
+        SdkHttpMethod method();
 
         /**
          * Sets the {@link SdkHttpMethod} for the builder.
@@ -167,7 +168,7 @@ public interface SdkHttpFullRequest
          * @param httpMethod New HTTP method.
          * @return This builder for method chaining.
          */
-        Builder httpMethod(SdkHttpMethod httpMethod);
+        Builder method(SdkHttpMethod httpMethod);
 
         /**
          * Returns the HTTP headers returned with this object.

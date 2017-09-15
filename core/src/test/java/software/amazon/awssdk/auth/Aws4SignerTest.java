@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayInputStream;
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -148,10 +147,10 @@ public class Aws4SignerTest {
     private SdkHttpFullRequest.Builder generateBasicRequest() {
         return SdkHttpFullRequest.builder()
                                  .content(new ByteArrayInputStream("{\"TableName\": \"foo\"}".getBytes()))
-                                 .httpMethod(SdkHttpMethod.POST)
+                                 .method(SdkHttpMethod.POST)
                                  .header("Host", "demo.us-east-1.amazonaws.com")
                                  .header("x-amz-archive-description", "test  test")
-                                 .resourcePath("/")
+                                 .path("/")
                                  .protocol("http")
                                  .host("demo.us-east-1.amazonaws.com");
     }

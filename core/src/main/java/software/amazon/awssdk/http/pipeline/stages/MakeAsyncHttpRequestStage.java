@@ -114,8 +114,8 @@ public class MakeAsyncHttpRequestStage<OutputT>
         return requestProvider != null
                && !Headers.firstMatching(request.headers(), "Content-Length").isPresent()
                // Can cause issues with signing if content length is present for these method
-               && request.httpMethod() != SdkHttpMethod.GET
-               && request.httpMethod() != SdkHttpMethod.HEAD;
+               && request.method() != SdkHttpMethod.GET
+               && request.method() != SdkHttpMethod.HEAD;
 
     }
 

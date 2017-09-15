@@ -77,7 +77,7 @@ public class ApacheHttpRequestFactory {
          * don't want to do this for all operations since it will cause
          * extra latency in the network interaction.
          */
-        if (SdkHttpMethod.PUT == request.httpMethod() && requestConfig.expectContinueEnabled()) {
+        if (SdkHttpMethod.PUT == request.method() && requestConfig.expectContinueEnabled()) {
             requestConfigBuilder.setExpectContinueEnabled(true);
         }
 
@@ -86,7 +86,7 @@ public class ApacheHttpRequestFactory {
 
 
     private HttpRequestBase createApacheRequest(SdkHttpFullRequest request, String uri) {
-        switch (request.httpMethod()) {
+        switch (request.method()) {
             case HEAD:
                 return new HttpHead(uri);
             case GET:
@@ -102,7 +102,7 @@ public class ApacheHttpRequestFactory {
             case PUT:
                 return wrapEntity(request, new HttpPut(uri));
             default:
-                throw new RuntimeException("Unknown HTTP method name: " + request.httpMethod());
+                throw new RuntimeException("Unknown HTTP method name: " + request.method());
         }
     }
 

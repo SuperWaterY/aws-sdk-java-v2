@@ -97,8 +97,8 @@ abstract class RdsPresignInterceptor<T extends AmazonWebServiceRequest> implemen
                 marshalledRequest.protocol(endpoint.getScheme())
                                  .host(endpoint.getHost())
                                  .port(endpoint.getPort())
-                                 .resourcePath(SdkHttpUtils.appendUri(endpoint.getPath(), marshalledRequest.resourcePath()))
-                                 .httpMethod(SdkHttpMethod.GET)
+                                 .path(SdkHttpUtils.appendUri(endpoint.getPath(), marshalledRequest.path()))
+                                 .method(SdkHttpMethod.GET)
                                  .queryParameter(PARAM_DESTINATION_REGION, destinationRegion)
                                  .removeQueryParameter(PARAM_SOURCE_REGION)
                                  .build();

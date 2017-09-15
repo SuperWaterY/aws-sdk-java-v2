@@ -23,11 +23,14 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.utils.CollectionUtils;
+import software.amazon.awssdk.utils.Validate;
+import software.amazon.awssdk.utils.http.SdkHttpUtils;
 
 /**
  * Internal implementation of {@link SdkHttpFullRequest}, buildable via {@link SdkHttpFullRequest#builder()}. Provided to HTTP
@@ -46,14 +49,36 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
     private final InputStream content;
 
     private DefaultSdkHttpFullRequest(Builder builder) {
-        this.protocol = builder.protocol;
-        this.host = builder.host;
+        this.protocol = Validate.paramNotNull(builder.protocol, "protocol");
+        this.host = Validate.paramNotNull(builder.host, "host");
         this.port = builder.port;
-        this.resourcePath = builder.resourcePath;
+        this.resourcePath = standardizePath(builder.resourcePath);
         this.queryParameters = deepUnmodifiableMap(builder.queryParameters, () -> new LinkedHashMap<>());
-        this.httpMethod = builder.httpMethod;
+        this.httpMethod = Validate.paramNotNull(builder.httpMethod, "method");
         this.headers = deepUnmodifiableMap(builder.headers, () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
         this.content = builder.content;
+    }
+
+    private String standardizePath(String path) {
+        if (path == null) {
+            return "";
+        }
+
+        StringBuilder standardizedPath = new StringBuilder();
+
+        // Path must always start with '/' (unless blank)
+        if (!path.startsWith("/")) {
+            standardizedPath.append('/');
+        }
+
+        standardizedPath.append(path);
+
+        // Path must never end with '/'
+        if (path.endsWith("/")) {
+            standardizedPath.setLength(standardizedPath.length() - 1);
+        }
+
+        return standardizedPath.toString();
     }
 
     @Override
@@ -68,7 +93,7 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
 
     @Override
     public Integer port() {
-        return port;
+        return Optional.ofNullable(port).orElseGet(() -> SdkHttpUtils.standardPort(protocol()));
     }
 
     @Override
@@ -77,7 +102,7 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
     }
 
     @Override
-    public String resourcePath() {
+    public String path() {
         return resourcePath;
     }
 
@@ -87,13 +112,13 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
     }
 
     @Override
-    public SdkHttpMethod httpMethod() {
+    public SdkHttpMethod method() {
         return httpMethod;
     }
 
     @Override
-    public InputStream content() {
-        return content;
+    public Optional<InputStream> content() {
+        return Optional.ofNullable(content);
     }
 
     @Override
@@ -102,9 +127,9 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
                 .protocol(protocol)
                 .host(host)
                 .port(port)
-                .resourcePath(resourcePath)
+                .path(resourcePath)
                 .queryParameters(queryParameters)
-                .httpMethod(httpMethod)
+                .method(httpMethod)
                 .headers(headers)
                 .content(content);
     }
@@ -161,13 +186,13 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
         }
 
         @Override
-        public DefaultSdkHttpFullRequest.Builder resourcePath(String resourcePath) {
-            this.resourcePath = resourcePath;
+        public DefaultSdkHttpFullRequest.Builder path(String path) {
+            this.resourcePath = path;
             return this;
         }
 
         @Override
-        public String resourcePath() {
+        public String path() {
             return resourcePath;
         }
 
@@ -201,13 +226,13 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
         }
 
         @Override
-        public DefaultSdkHttpFullRequest.Builder httpMethod(SdkHttpMethod httpMethod) {
+        public DefaultSdkHttpFullRequest.Builder method(SdkHttpMethod httpMethod) {
             this.httpMethod = httpMethod;
             return this;
         }
 
         @Override
-        public SdkHttpMethod httpMethod() {
+        public SdkHttpMethod method() {
             return httpMethod;
         }
 

@@ -47,10 +47,10 @@ public class GlacierExecutionInterceptor implements ExecutionInterceptor {
                                                              Long.toString(parseContentLengthFromRange(range))));
 
         } else if (originalRequest instanceof GetJobOutputRequest || originalRequest instanceof DescribeJobRequest) {
-            String resourcePath = mutableRequest.resourcePath();
+            String resourcePath = mutableRequest.path();
             if (resourcePath != null) {
                 String newResourcePath = resourcePath.replace("{jobType}", "archive-retrievals");
-                mutableRequest.resourcePath(newResourcePath);
+                mutableRequest.path(newResourcePath);
             }
         }
         return mutableRequest;

@@ -105,8 +105,8 @@ public final class UrlConnectionHttpClientIntegrationTest {
     private SdkHttpFullRequest mockSdkRequest(URI uri) {
         SdkHttpFullRequest request = mock(SdkHttpFullRequest.class);
         when(request.toUri()).thenReturn(uri);
-        when(request.httpMethod()).thenReturn(SdkHttpMethod.GET);
-        when(request.resourcePath()).thenReturn("/");
+        when(request.method()).thenReturn(SdkHttpMethod.GET);
+        when(request.path()).thenReturn("/");
         when(request.queryParameters()).thenReturn(Collections.emptyMap());
         Map<String, List<String>> headers = new HashMap<>();
         headers.put("Host", Collections.singletonList(uri.getHost()));

@@ -39,9 +39,9 @@ public class SdkHttpFullRequestAdapter {
                                  .protocol(request.getEndpoint().getScheme())
                                  .host(request.getEndpoint().getHost())
                                  .port(request.getEndpoint().getPort())
-                                 .resourcePath(SdkHttpUtils.appendUri(request.getEndpoint().getPath(), request.getResourcePath()))
+                                 .path(SdkHttpUtils.appendUri(request.getEndpoint().getPath(), request.getResourcePath()))
                                  .queryParameters(request.getParameters())
-                                 .httpMethod(SdkHttpMethod.fromValue(request.getHttpMethod().name()))
+                                 .method(SdkHttpMethod.fromValue(request.getHttpMethod().name()))
                                  .headers(adaptHeaders(request.getHeaders()))
                                  .content(request.getContent());
     }
