@@ -32,12 +32,12 @@ public class SdkHttpResponseAdapter {
     public static HttpResponse adapt(boolean calculateCrc32FromCompressedData,
                                      SdkHttpFullRequest request,
                                      SdkHttpFullResponse awsHttpResponse) {
-        final HttpResponse httpResponse = new HttpResponse(request, awsHttpResponse.getContent());
-        httpResponse.setStatusCode(awsHttpResponse.getStatusCode());
-        httpResponse.setStatusText(awsHttpResponse.getStatusText());
+        final HttpResponse httpResponse = new HttpResponse(request, awsHttpResponse.content());
+        httpResponse.setStatusCode(awsHttpResponse.statusCode());
+        httpResponse.setStatusText(awsHttpResponse.statusText());
 
         // Legacy HttpResponse only supports a single value for a header
-        awsHttpResponse.getHeaders()
+        awsHttpResponse.headers()
                        .forEach((k, v) -> httpResponse.addHeader(k, v.get(0)));
 
         httpResponse.setContent(getContent(calculateCrc32FromCompressedData, awsHttpResponse, httpResponse));
@@ -55,16 +55,16 @@ public class SdkHttpResponseAdapter {
         final Optional<Long> crc32Checksum = getCrc32Checksum(httpResponse);
         if (shouldDecompress(httpResponse)) {
             if (calculateCrc32FromCompressedData && crc32Checksum.isPresent()) {
-                return decompressing(crc32Validating(awsHttpResponse.getContent(), crc32Checksum.get()));
+                return decompressing(crc32Validating(awsHttpResponse.content(), crc32Checksum.get()));
             } else if (crc32Checksum.isPresent()) {
-                return crc32Validating(decompressing(awsHttpResponse.getContent()), crc32Checksum.get());
+                return crc32Validating(decompressing(awsHttpResponse.content()), crc32Checksum.get());
             } else {
-                return decompressing(awsHttpResponse.getContent());
+                return decompressing(awsHttpResponse.content());
             }
         } else if (crc32Checksum.isPresent()) {
-            return crc32Validating(awsHttpResponse.getContent(), crc32Checksum.get());
+            return crc32Validating(awsHttpResponse.content(), crc32Checksum.get());
         }
-        return awsHttpResponse.getContent();
+        return awsHttpResponse.content();
     }
 
     private static Optional<Long> getCrc32Checksum(HttpResponse httpResponse) {

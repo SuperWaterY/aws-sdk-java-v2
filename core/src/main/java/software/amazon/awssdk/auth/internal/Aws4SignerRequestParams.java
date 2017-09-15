@@ -78,14 +78,14 @@ public final class Aws4SignerRequestParams {
     /**
      * The HTTP request to be signed.
      */
-    private final SdkHttpFullRequest httpRequest;
+    private final SdkHttpFullRequest.Builder httpRequest;
 
     /**
      * Generates an instance of AWS4signerRequestParams that holds the parameters used for computing a AWS 4 signature
      * for a request.
      */
     @ReviewBeforeRelease("This should be simplified with the signer refactor.")
-    public Aws4SignerRequestParams(SdkRequest originalRequest, SdkHttpFullRequest httpRequest,
+    public Aws4SignerRequestParams(SdkRequest originalRequest, SdkHttpFullRequest.Builder httpRequest,
                                    ExecutionAttributes executionAttributes,
                                    Date signingDateOverride, String regionNameOverride,
                                    String serviceName, String signingAlgorithm) {
@@ -107,10 +107,9 @@ public final class Aws4SignerRequestParams {
     }
 
     @ReviewBeforeRelease("Specify region when creating signer rather then parsing from endpoint.")
-    private String parseRegion(SdkHttpRequest request, String regionNameOverride) {
+    private String parseRegion(SdkHttpFullRequest.Builder request, String regionNameOverride) {
         return regionNameOverride != null ? regionNameOverride
-                : AwsHostNameUtils.parseRegionName(request.getEndpoint()
-                                                           .getHost(), this.serviceName);
+                : AwsHostNameUtils.parseRegionName(request.endpoint().getHost(), this.serviceName);
     }
 
     /**
@@ -141,7 +140,7 @@ public final class Aws4SignerRequestParams {
     /**
      * Returns the HTTP request to be signed.
      */
-    public SdkHttpFullRequest httpRequest() {
+    public SdkHttpFullRequest.Builder httpRequest() {
         return httpRequest;
     }
 

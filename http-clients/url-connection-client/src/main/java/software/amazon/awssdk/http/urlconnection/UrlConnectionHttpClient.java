@@ -69,9 +69,9 @@ final class UrlConnectionHttpClient implements SdkHttpClient {
 
     private HttpURLConnection createAndConfigureConnection(SdkHttpFullRequest request) {
         HttpURLConnection connection = invokeSafely(() -> (HttpURLConnection) createRequest(request).toURL().openConnection());
-        request.getHeaders().forEach((key, values) -> values.forEach(value -> connection.setRequestProperty(key, value)));
-        invokeSafely(() -> connection.setRequestMethod(request.getHttpMethod().name()));
-        if (request.getContent() != null) {
+        request.headers().forEach((key, values) -> values.forEach(value -> connection.setRequestProperty(key, value)));
+        invokeSafely(() -> connection.setRequestMethod(request.httpMethod().name()));
+        if (request.content() != null) {
             connection.setDoOutput(true);
         }
 
@@ -82,12 +82,12 @@ final class UrlConnectionHttpClient implements SdkHttpClient {
     }
 
     private URI createRequest(SdkHttpFullRequest request) {
-        StringBuilder uriBuilder = new StringBuilder(request.getEndpoint().toString());
-        if (isNotBlank(request.getResourcePath())) {
-            uriBuilder.append(request.getResourcePath());
+        StringBuilder uriBuilder = new StringBuilder(request.endpoint().toString());
+        if (isNotBlank(request.resourcePath())) {
+            uriBuilder.append(request.resourcePath());
         }
 
-        String params = request.getParameters().entrySet().stream()
+        String params = request.queryParameters().entrySet().stream()
                                .flatMap(this::flattenParams)
                                .collect(Collectors.joining("&"));
 
@@ -128,8 +128,8 @@ final class UrlConnectionHttpClient implements SdkHttpClient {
         public SdkHttpFullResponse call() throws Exception {
             connection.connect();
 
-            if (request.getContent() != null) {
-                IoUtils.copy(request.getContent(), connection.getOutputStream());
+            if (request.content() != null) {
+                IoUtils.copy(request.content(), connection.getOutputStream());
             }
 
             int responseCode = connection.getResponseCode();

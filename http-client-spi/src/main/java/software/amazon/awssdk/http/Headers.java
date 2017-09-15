@@ -15,8 +15,15 @@
 
 package software.amazon.awssdk.http;
 
+import static java.util.stream.Collectors.toList;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
+
 /**
- * Constants for commonly used HTTP headers.
+ * Utilities and constants for working with HTTP headers.
  */
 public final class Headers {
 
@@ -25,4 +32,30 @@ public final class Headers {
     private Headers() {
     }
 
+    /**
+     * Perform a case-insensitive search for a particular header in the provided map of headers.
+     *
+     * @param headers The headers to search.
+     * @param header The header to search for (case insensitively).
+     * @return A stream providing the values for the headers that matched the requested header.
+     */
+    public static Stream<String> allMatching(Map<String, List<String>> headers, String header) {
+        return headers.entrySet().stream()
+                      .filter(e -> e.getKey().equalsIgnoreCase(header))
+                      .flatMap(e -> e.getValue() != null ? e.getValue().stream() : Stream.empty());
+    }
+
+    /**
+     * Perform a case-insensitive search for a particular header in the provided map of headers, returning the first matching
+     * header, if one is found.
+     * <br/>
+     * This is useful for headers like 'Content-Type' or 'Content-Length' of which there is expected to be only one value present.
+     *
+     * @param headers The headers to search.
+     * @param header The header to search for (case insensitively).
+     * @return The first header that matched the requested one, or empty if one was not found.
+     */
+    public static Optional<String> firstMatching(Map<String, List<String>> headers, String header) {
+        return allMatching(headers, header).findFirst();
+    }
 }

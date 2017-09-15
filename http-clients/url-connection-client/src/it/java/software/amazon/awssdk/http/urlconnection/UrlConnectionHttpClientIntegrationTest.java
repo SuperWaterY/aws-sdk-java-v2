@@ -39,6 +39,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import software.amazon.awssdk.http.Headers;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
@@ -72,9 +73,9 @@ public final class UrlConnectionHttpClientIntegrationTest {
         verify(1, getRequestedFor(urlMatching("/"))
             .withHeader("Host", containing("localhost"))
             .withHeader("User-Agent", containing("hello")));
-        assertThat(IoUtils.toString(response.getContent())).isEqualTo("hello");
-        assertThat(response.getFirstHeaderValue("Some-Header")).contains("With Value");
-        assertThat(response.getFirstHeaderValue("Some-Header")).contains("With Value");
+        assertThat(IoUtils.toString(response.content())).isEqualTo("hello");
+        assertThat(Headers.firstMatching(response.headers(), "Some-Header")).contains("With Value");
+        assertThat(Headers.firstMatching(response.headers(), "Some-Header")).contains("With Value");
     }
 
     @Test
@@ -96,21 +97,21 @@ public final class UrlConnectionHttpClientIntegrationTest {
         SdkHttpFullResponse response = client.prepareRequest(request, requestContext).call();
 
         verify(1, getRequestedFor(urlMatching("/")).withHeader("Host", containing("localhost")));
-        assertThat(IoUtils.toString(response.getContent())).isEqualTo("response");
-        assertThat(response.getStatusCode()).isEqualTo(returnCode);
+        assertThat(IoUtils.toString(response.content())).isEqualTo("response");
+        assertThat(response.statusCode()).isEqualTo(returnCode);
         mockServer.resetMappings();
     }
 
     private SdkHttpFullRequest mockSdkRequest(URI uri) {
         SdkHttpFullRequest request = mock(SdkHttpFullRequest.class);
-        when(request.getEndpoint()).thenReturn(uri);
-        when(request.getHttpMethod()).thenReturn(SdkHttpMethod.GET);
-        when(request.getResourcePath()).thenReturn("/");
-        when(request.getParameters()).thenReturn(Collections.emptyMap());
+        when(request.endpoint()).thenReturn(uri);
+        when(request.httpMethod()).thenReturn(SdkHttpMethod.GET);
+        when(request.resourcePath()).thenReturn("/");
+        when(request.queryParameters()).thenReturn(Collections.emptyMap());
         Map<String, List<String>> headers = new HashMap<>();
         headers.put("Host", Collections.singletonList(uri.getHost()));
         headers.put("User-Agent", Collections.singletonList("hello-world!"));
-        when(request.getHeaders()).thenReturn(headers);
+        when(request.headers()).thenReturn(headers);
         return request;
     }
 }

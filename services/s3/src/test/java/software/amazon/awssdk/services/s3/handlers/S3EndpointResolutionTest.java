@@ -65,11 +65,11 @@ public class S3EndpointResolutionTest {
 
         s3Client.listBuckets();
 
-        assertThat(mockHttpClient.getLastRequest().getEndpoint())
+        assertThat(mockHttpClient.getLastRequest().endpoint())
                 .as("Uses regional S3 endpoint without bucket")
                 .isEqualTo(URI.create(ENDPOINT_WITHOUT_BUCKET));
 
-        assertThat(mockHttpClient.getLastRequest().getResourcePath())
+        assertThat(mockHttpClient.getLastRequest().resourcePath())
                 .as("Bucket is not in resource path")
                 .isEqualTo("/");
     }
@@ -84,11 +84,11 @@ public class S3EndpointResolutionTest {
 
         s3Client.listBuckets();
 
-        assertThat(mockHttpClient.getLastRequest().getEndpoint())
+        assertThat(mockHttpClient.getLastRequest().endpoint())
                 .as("Uses regional S3 endpoint without bucket")
                 .isEqualTo(URI.create("https://s3.dualstack.ap-south-1.amazonaws.com"));
 
-        assertThat(mockHttpClient.getLastRequest().getResourcePath())
+        assertThat(mockHttpClient.getLastRequest().resourcePath())
                 .as("Bucket is not in resource path")
                 .isEqualTo("/");
     }
@@ -105,7 +105,7 @@ public class S3EndpointResolutionTest {
 
         s3Client.listBuckets();
 
-        assertThat(mockHttpClient.getLastRequest().getEndpoint())
+        assertThat(mockHttpClient.getLastRequest().endpoint())
                 .as("Uses custom endpoint")
                 .isEqualTo(customEndpoint);
     }
@@ -168,11 +168,11 @@ public class S3EndpointResolutionTest {
         s3Client.listObjects(ListObjectsRequest.builder().bucket(NON_DNS_COMPATIBLE_BUCKET).build());
 
         SdkHttpFullRequest capturedRequest = mockHttpClient.getLastRequest();
-        assertThat(capturedRequest.getEndpoint())
+        assertThat(capturedRequest.endpoint())
                 .as("Uses endpoint without bucket name prepended")
                 .isEqualTo(URI.create(ENDPOINT_WITHOUT_BUCKET));
 
-        assertThat(capturedRequest.getResourcePath())
+        assertThat(capturedRequest.resourcePath())
                 .as("Resource path is left as bucket name")
                 .startsWith("/" + NON_DNS_COMPATIBLE_BUCKET);
     }
@@ -282,7 +282,7 @@ public class S3EndpointResolutionTest {
 
         s3Client.listBuckets();
 
-        assertThat(mockHttpClient.getLastRequest().getEndpoint())
+        assertThat(mockHttpClient.getLastRequest().endpoint())
                 .as("Uses regional S3 endpoint")
                 .isEqualTo(URI.create("https://s3.ap-south-1.amazonaws.com"));
     }
@@ -305,11 +305,11 @@ public class S3EndpointResolutionTest {
      * @param endpoint        Expected endpoint.
      */
     private void assertUsesPathStyleAddressing(SdkHttpFullRequest capturedRequest, String endpoint) {
-        assertThat(capturedRequest.getEndpoint())
+        assertThat(capturedRequest.endpoint())
                 .as("Uses endpoint without bucket name prepended")
                 .isEqualTo(URI.create(endpoint));
 
-        assertThat(capturedRequest.getResourcePath())
+        assertThat(capturedRequest.resourcePath())
                 .as("Resource path is left as bucket name")
                 .startsWith("/" + BUCKET);
     }
@@ -321,11 +321,11 @@ public class S3EndpointResolutionTest {
      * @param endpoint        Expected endpoint.
      */
     private void assertUsesVirtualAddressing(SdkHttpFullRequest capturedRequest, String endpoint) {
-        assertThat(capturedRequest.getEndpoint())
+        assertThat(capturedRequest.endpoint())
                 .as("Uses virtual addressing")
                 .isEqualTo(URI.create(endpoint));
 
-        assertThat(capturedRequest.getResourcePath())
+        assertThat(capturedRequest.resourcePath())
                 .as("Resource path has bucket removed.")
                 .isEmpty();
     }

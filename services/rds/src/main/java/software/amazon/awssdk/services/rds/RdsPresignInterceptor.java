@@ -79,7 +79,7 @@ abstract class RdsPresignInterceptor<T extends AmazonWebServiceRequest> implemen
             return request;
         }
 
-        if (request.getParameters().containsKey(PARAM_PRESIGNED_URL)) {
+        if (request.queryParameters().containsKey(PARAM_PRESIGNED_URL)) {
             return request;
         }
 
@@ -90,7 +90,7 @@ abstract class RdsPresignInterceptor<T extends AmazonWebServiceRequest> implemen
             return request;
         }
 
-        String destinationRegion = AwsHostNameUtils.parseRegion(request.getEndpoint().getHost(), SERVICE_NAME);
+        String destinationRegion = AwsHostNameUtils.parseRegion(request.endpoint().getHost(), SERVICE_NAME);
 
         SdkHttpFullRequest requestToPresign =
                 presignableRequest.marshall()
@@ -149,10 +149,10 @@ abstract class RdsPresignInterceptor<T extends AmazonWebServiceRequest> implemen
     }
 
     private String generateUrl(SdkHttpFullRequest request) {
-        URI endpoint = request.getEndpoint();
+        URI endpoint = request.endpoint();
         String uri = SdkHttpUtils.appendUri(endpoint.toString(),
-                                            request.getResourcePath(), true);
-        String encodedParams = SdkHttpUtils.encodeParameters(request);
+                                            request.resourcePath(), true);
+        String encodedParams = SdkHttpUtils.encodeQueryParameters(request.queryParameters());
 
         if (!StringUtils.isEmpty(encodedParams)) {
             uri += "?" + encodedParams;

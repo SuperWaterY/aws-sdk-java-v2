@@ -50,7 +50,7 @@ public class ApacheHttpRequestFactory {
     private static final List<String> IGNORE_HEADERS = Arrays.asList(HttpHeaders.CONTENT_LENGTH, HttpHeaders.HOST);
 
     public HttpRequestBase create(final SdkHttpFullRequest request, final ApacheHttpRequestConfig requestConfig) {
-        URI endpoint = request.getEndpoint();
+        URI endpoint = request.endpoint();
 
         /*
          * HttpClient cannot handle url in pattern of "http://host//path", so we
@@ -58,7 +58,7 @@ public class ApacheHttpRequestFactory {
          * into "/%2F"
          */
         String uri = SdkHttpUtils.appendUri(endpoint.toString(), request
-                .getResourcePath(), true);
+                .resourcePath(), true);
         String encodedParams = SdkHttpUtils.encodeParameters(request);
 
         if (isNotBlank(encodedParams)) {
@@ -90,7 +90,7 @@ public class ApacheHttpRequestFactory {
          * don't want to do this for all operations since it will cause
          * extra latency in the network interaction.
          */
-        if (SdkHttpMethod.PUT == request.getHttpMethod() && requestConfig.expectContinueEnabled()) {
+        if (SdkHttpMethod.PUT == request.httpMethod() && requestConfig.expectContinueEnabled()) {
             requestConfigBuilder.setExpectContinueEnabled(true);
         }
 
@@ -99,7 +99,7 @@ public class ApacheHttpRequestFactory {
 
 
     private HttpRequestBase createApacheRequest(SdkHttpFullRequest request, String uri, String encodedParams) {
-        switch (request.getHttpMethod()) {
+        switch (request.httpMethod()) {
             case HEAD:
                 return new HttpHead(uri);
             case GET:
@@ -115,7 +115,7 @@ public class ApacheHttpRequestFactory {
             case PUT:
                 return wrapEntity(request, new HttpPut(uri), encodedParams);
             default:
-                throw new RuntimeException("Unknown HTTP method name: " + request.getHttpMethod());
+                throw new RuntimeException("Unknown HTTP method name: " + request.httpMethod());
         }
     }
 
@@ -133,9 +133,9 @@ public class ApacheHttpRequestFactory {
          * preparation for the retry. Eventually, these wrappers would
          * return incorrect validation result.
          */
-        if (request.getContent() != null) {
+        if (request.content() != null) {
             HttpEntity entity = new RepeatableInputStreamRequestEntity(request);
-            if (request.getHeaders().get(HttpHeaders.CONTENT_LENGTH) == null) {
+            if (request.headers().get(HttpHeaders.CONTENT_LENGTH) == null) {
                 entity = ApacheUtils.newBufferedHttpEntity(entity);
             }
             entityEnclosingRequest.setEntity(entity);
@@ -149,19 +149,19 @@ public class ApacheHttpRequestFactory {
      */
     private void addHeadersToRequest(HttpRequestBase httpRequest, SdkHttpFullRequest request) {
 
-        httpRequest.addHeader(HttpHeaders.HOST, getHostHeaderValue(request.getEndpoint()));
+        httpRequest.addHeader(HttpHeaders.HOST, getHostHeaderValue(request.endpoint()));
 
 
         // Copy over any other headers already in our request
-        request.getHeaders().entrySet().stream()
+        request.headers().entrySet().stream()
                 /*
                  * HttpClient4 fills in the Content-Length header and complains if
                  * it's already present, so we skip it here. We also skip the Host
                  * header to avoid sending it twice, which will interfere with some
                  * signing schemes.
                  */
-                .filter(e -> !IGNORE_HEADERS.contains(e.getKey()))
-                .forEach(e -> e.getValue().stream()
+               .filter(e -> !IGNORE_HEADERS.contains(e.getKey()))
+               .forEach(e -> e.getValue().stream()
                         .forEach(h -> httpRequest.addHeader(e.getKey(), h)));
 
         /* Set content type and encoding */

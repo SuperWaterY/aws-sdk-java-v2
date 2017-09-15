@@ -42,7 +42,7 @@ public class QueueUrlInterceptor implements ExecutionInterceptor {
     public SdkHttpFullRequest modifyHttpRequest(Context.ModifyHttpRequest context, ExecutionAttributes executionAttributes) {
         SdkHttpFullRequest request = context.httpRequest();
 
-        final Map<String, List<String>> requestParams = new HashMap<>(request.getParameters());
+        final Map<String, List<String>> requestParams = new HashMap<>(request.queryParameters());
         final List<String> queueUrlParam = requestParams.get(QUEUE_URL_PARAMETER);
         if (queueUrlParam != null && !queueUrlParam.isEmpty()) {
             List<String> queueUrlParameter = requestParams.remove(QUEUE_URL_PARAMETER);

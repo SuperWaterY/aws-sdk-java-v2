@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.RequestExecutionContext;
+import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils;
@@ -42,11 +43,11 @@ public class MoveParametersToBodyStageTest {
 
         SdkHttpFullRequest output = sut.execute(mutableRequest, requestContext(mutableRequest)).build();
 
-        assertThat(output.getParameters()).hasSize(0);
-        assertThat(output.getHeaders())
+        assertThat(output.queryParameters()).hasSize(0);
+        assertThat(output.headers())
                 .containsKey("Content-Length")
                 .containsEntry("Content-Type", singletonList("application/x-www-form-urlencoded; charset=utf-8"));
-        assertThat(output.getContent()).isNotNull();
+        assertThat(output.content()).isNotNull();
     }
 
     @Test
@@ -66,9 +67,9 @@ public class MoveParametersToBodyStageTest {
 
         SdkHttpFullRequest output = sut.execute(mutableRequest, requestContext(mutableRequest)).build();
 
-        assertThat(output.getParameters()).hasSize(1);
-        assertThat(output.getHeaders()).hasSize(0);
-        assertThat(output.getContent()).isEqualTo(content);
+        assertThat(output.queryParameters()).hasSize(1);
+        assertThat(output.headers()).hasSize(0);
+        assertThat(output.content()).isEqualTo(content);
     }
 
     @Test
@@ -79,9 +80,9 @@ public class MoveParametersToBodyStageTest {
 
         SdkHttpFullRequest output = sut.execute(mutableRequest, requestContext(mutableRequest)).build();
 
-        assertThat(output.getParameters()).hasSize(0);
-        assertThat(output.getHeaders()).hasSize(0);
-        assertThat(output.getContent()).isNull();
+        assertThat(output.queryParameters()).hasSize(0);
+        assertThat(output.headers()).hasSize(0);
+        assertThat(output.content()).isNull();
     }
 
     private void nonPostRequestsUnaltered(SdkHttpMethod method) {
@@ -92,14 +93,15 @@ public class MoveParametersToBodyStageTest {
 
         SdkHttpFullRequest output = sut.execute(mutableRequest, requestContext(mutableRequest)).build();
 
-        assertThat(output.getParameters()).hasSize(1);
-        assertThat(output.getHeaders()).hasSize(0);
-        assertThat(output.getContent()).isNull();
+        assertThat(output.queryParameters()).hasSize(1);
+        assertThat(output.headers()).hasSize(0);
+        assertThat(output.content()).isNull();
     }
 
     private RequestExecutionContext requestContext(SdkHttpFullRequest.Builder mutableRequest) {
+        ExecutionContext executionContext = ClientExecutionAndRequestTimerTestUtils.executionContext(mutableRequest.build());
         return RequestExecutionContext.builder()
-                                      .executionContext(ClientExecutionAndRequestTimerTestUtils.executionContext(mutableRequest))
+                                      .executionContext(executionContext)
                                       .requestConfig(RequestConfig.empty())
                                       .build();
     }

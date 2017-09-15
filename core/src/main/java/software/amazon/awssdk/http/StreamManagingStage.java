@@ -88,11 +88,11 @@ public class StreamManagingStage<OutputT> implements RequestPipeline<SdkHttpFull
      * @return Modified input stream to use for the remainder of the execution.
      */
     private InputStream createManagedStream(SdkHttpFullRequest request, RequestConfig requestConfig) {
-        if (request.getContent() == null) {
+        if (request.content() == null) {
             return null;
         }
         final InputStream content = monitorStreamProgress(requestConfig.getProgressListener(),
-                                                          bufferIfNeeded(makeResettable(request.getContent())));
+                                                          bufferIfNeeded(makeResettable(request.content())));
 
         return unreliableTestConfig == null ? content : wrapWithUnreliableStream(content);
     }

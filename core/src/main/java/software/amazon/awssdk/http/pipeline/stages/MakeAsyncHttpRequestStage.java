@@ -28,6 +28,7 @@ import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.http.AmazonHttpClient;
+import software.amazon.awssdk.http.Headers;
 import software.amazon.awssdk.http.HttpAsyncClientDependencies;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpStatusCodes;
@@ -111,10 +112,10 @@ public class MakeAsyncHttpRequestStage<OutputT>
 
     private boolean shouldSetContentLength(SdkHttpFullRequest request, SdkHttpRequestProvider requestProvider) {
         return requestProvider != null
-               && !request.getFirstHeaderValue("Content-Length").isPresent()
+               && !Headers.firstMatching(request.headers(), "Content-Length").isPresent()
                // Can cause issues with signing if content length is present for these method
-               && request.getHttpMethod() != SdkHttpMethod.GET
-               && request.getHttpMethod() != SdkHttpMethod.HEAD;
+               && request.httpMethod() != SdkHttpMethod.GET
+               && request.httpMethod() != SdkHttpMethod.HEAD;
 
     }
 
@@ -159,7 +160,7 @@ public class MakeAsyncHttpRequestStage<OutputT>
 
         @Override
         public void headersReceived(SdkHttpResponse response) {
-            if (isSuccessful(response.getStatusCode())) {
+            if (isSuccessful(response.statusCode())) {
                 isSuccess = true;
                 responseHandler.headersReceived(response);
             } else {

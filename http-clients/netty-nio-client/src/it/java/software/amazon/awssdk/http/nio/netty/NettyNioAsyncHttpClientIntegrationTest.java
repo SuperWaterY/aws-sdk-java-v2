@@ -259,8 +259,8 @@ public class NettyNioAsyncHttpClientIntegrationTest {
 
         assertThat(recorder.responses).hasOnlyOneElementSatisfying(
                 headerResponse -> {
-                    assertThat(headerResponse.getHeaders()).containsKey("Some-Header");
-                    assertThat(headerResponse.getStatusCode()).isEqualTo(200);
+                    assertThat(headerResponse.headers()).containsKey("Some-Header");
+                    assertThat(headerResponse.statusCode()).isEqualTo(200);
                 });
 
         assertThat(recorder.fullResponseAsString()).isEqualTo(body);
@@ -305,18 +305,18 @@ public class NettyNioAsyncHttpClientIntegrationTest {
                                          SdkHttpMethod method,
                                          Map<String, String> params) {
         SdkHttpRequest request = mock(SdkHttpRequest.class);
-        when(request.getEndpoint()).thenReturn(uri);
-        when(request.getHttpMethod()).thenReturn(method);
-        when(request.getResourcePath()).thenReturn(resourcePath);
-        when(request.getParameters()).thenReturn(params.entrySet()
-                                                       .stream()
-                                                       .collect(toMap(Entry::getKey, e -> singletonList(e.getValue()))));
+        when(request.endpoint()).thenReturn(uri);
+        when(request.httpMethod()).thenReturn(method);
+        when(request.resourcePath()).thenReturn(resourcePath);
+        when(request.queryParameters()).thenReturn(params.entrySet()
+                                                         .stream()
+                                                         .collect(toMap(Entry::getKey, e -> singletonList(e.getValue()))));
         Map<String, List<String>> headers = new HashMap<>();
         headers.put("Host", singletonList(uri.getHost()));
         if (body != null) {
             headers.put("Content-Length", singletonList(String.valueOf(body.getBytes(UTF_8).length)));
         }
-        when(request.getHeaders()).thenReturn(headers);
+        when(request.headers()).thenReturn(headers);
         return request;
     }
 

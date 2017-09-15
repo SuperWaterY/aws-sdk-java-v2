@@ -56,7 +56,7 @@ public final class PresignerFacade {
         final Presigner presigner = (Presigner) signerProvider.getSigner(SignerProviderContext.builder()
                                                                                               .withIsRedirect(false)
                                                                                               .withRequest(httpRequest)
-                                                                                              .withUri(httpRequest.getEndpoint())
+                                                                                              .withUri(httpRequest.endpoint())
                                                                                               .build());
         SdkHttpFullRequest.Builder mutableHttpRequest = httpRequest.toBuilder();
         addCustomQueryParams(mutableHttpRequest, requestConfig);

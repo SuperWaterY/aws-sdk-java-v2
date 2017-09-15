@@ -21,6 +21,7 @@ import org.assertj.core.api.Condition;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.config.ClientOverrideConfiguration;
+import software.amazon.awssdk.http.Headers;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.interceptor.Context;
 import software.amazon.awssdk.interceptor.ExecutionAttributes;
@@ -53,9 +54,9 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
     public void listVaults_SendsApiVersion() {
         client.listVaults(ListVaultsRequest.builder().build());
         assertThat(capturingExecutionInterceptor.beforeTransmission)
-                .is(new Condition<>(r -> r.getFirstHeaderValue("x-amz-glacier-version")
-                                          .orElseThrow(() -> new AssertionError("x-amz-glacier-version header not found"))
-                                          .equals("2012-06-01"),
+                .is(new Condition<>(r -> Headers.firstMatching(r.headers(), "x-amz-glacier-version")
+                                                .orElseThrow(() -> new AssertionError("x-amz-glacier-version header not found"))
+                                                .equals("2012-06-01"),
                                     "Glacier API version is present in header"));
     }
 

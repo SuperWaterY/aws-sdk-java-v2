@@ -55,7 +55,7 @@ public class QueryStringSignerTest {
 
         request = SignerTestUtils.signRequest(signer, request, credentials);
 
-        assertSignature(EXPECTED_SIGNATURE, request.getParameters());
+        assertSignature(EXPECTED_SIGNATURE, request.queryParameters());
     }
 
     @Test
@@ -69,7 +69,7 @@ public class QueryStringSignerTest {
 
         request = SignerTestUtils.signRequest(signer, request, credentials);
 
-        assertSignature(EXPECTED_SIGNATURE, request.getParameters());
+        assertSignature(EXPECTED_SIGNATURE, request.queryParameters());
     }
 
     @Test
@@ -83,7 +83,7 @@ public class QueryStringSignerTest {
 
         request = SignerTestUtils.signRequest(signer, request, credentials);
 
-        assertSignature(EXPECTED_SIGNATURE, request.getParameters());
+        assertSignature(EXPECTED_SIGNATURE, request.queryParameters());
     }
 
     @Test
@@ -97,7 +97,7 @@ public class QueryStringSignerTest {
 
         request = SignerTestUtils.signRequest(signer, request, new AnonymousCredentialsProvider().getCredentials());
 
-        assertNull(request.getParameters().get("Signature"));
+        assertNull(request.queryParameters().get("Signature"));
     }
 
     /**

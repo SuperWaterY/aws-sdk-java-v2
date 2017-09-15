@@ -60,18 +60,15 @@ public abstract class AbstractAwsSigner implements Signer {
     private static final ThreadLocal<MessageDigest> SHA256_MESSAGE_DIGEST;
 
     static {
-        SHA256_MESSAGE_DIGEST = new ThreadLocal<MessageDigest>() {
-            @Override
-            protected MessageDigest initialValue() {
-                try {
-                    return MessageDigest.getInstance("SHA-256");
-                } catch (NoSuchAlgorithmException e) {
-                    throw new SdkClientException(
-                            "Unable to get SHA256 Function"
-                            + e.getMessage(), e);
-                }
+        SHA256_MESSAGE_DIGEST = ThreadLocal.withInitial(() -> {
+            try {
+                return MessageDigest.getInstance("SHA-256");
+            } catch (NoSuchAlgorithmException e) {
+                throw new SdkClientException(
+                        "Unable to get SHA256 Function"
+                        + e.getMessage(), e);
             }
-        };
+        });
         EMPTY_STRING_SHA256_HEX = BinaryUtils.toHex(doHash(""));
     }
 

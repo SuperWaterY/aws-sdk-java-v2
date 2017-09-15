@@ -140,17 +140,15 @@ public class SdkHttpUtils {
         return true;
     }
 
-    public static String encodeParameters(SdkHttpRequest request) {
+    public static String encodeQueryParameters(Map<String, List<String>> queryParameters) {
 
-        final Map<String, List<String>> requestParams = request.getParameters();
-
-        if (requestParams.isEmpty()) {
+        if (queryParameters.isEmpty()) {
             return "";
         }
 
         final List<NameValuePair> nameValuePairs = new ArrayList<>();
 
-        for (Entry<String, List<String>> entry : requestParams.entrySet()) {
+        for (Entry<String, List<String>> entry : queryParameters.entrySet()) {
             String parameterName = entry.getKey();
             nameValuePairs.addAll(entry.getValue().stream()
                                        .map(value -> new BasicNameValuePair(parameterName, value))

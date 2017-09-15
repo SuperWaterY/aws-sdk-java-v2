@@ -85,7 +85,7 @@ public class SdkHttpUtils {
      */
     public static String encodeParameters(SdkHttpFullRequest request) {
 
-        final Map<String, List<String>> requestParams = request.getParameters();
+        final Map<String, List<String>> requestParams = request.queryParameters();
 
         if (requestParams.isEmpty()) {
             return null;

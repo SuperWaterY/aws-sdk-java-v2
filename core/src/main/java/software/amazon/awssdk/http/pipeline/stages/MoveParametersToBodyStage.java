@@ -42,10 +42,10 @@ public final class MoveParametersToBodyStage implements MutableRequestToRequestP
     private boolean shouldPutParamsInBody(SdkHttpFullRequest.Builder input,
                                           RequestExecutionContext context) {
         return notSimpleDb(context) &&
-               input.getHttpMethod() == SdkHttpMethod.POST &&
-               input.getContent() == null &&
-               input.getParameters() != null &&
-               input.getParameters().size() > 0;
+               input.httpMethod() == SdkHttpMethod.POST &&
+               input.content() == null &&
+               input.queryParameters() != null &&
+               input.queryParameters().size() > 0;
     }
 
     // TODO FIXME hacky hack
@@ -59,7 +59,7 @@ public final class MoveParametersToBodyStage implements MutableRequestToRequestP
     }
 
     private SdkHttpFullRequest.Builder putParams(SdkHttpFullRequest.Builder input) {
-        byte[] params = SdkHttpUtils.encodeParameters(input).getBytes(StandardCharsets.UTF_8);
+        byte[] params = SdkHttpUtils.encodeQueryParameters(input.queryParameters()).getBytes(StandardCharsets.UTF_8);
 
         return input.clearQueryParameters()
                     .content(new ByteArrayInputStream(params))

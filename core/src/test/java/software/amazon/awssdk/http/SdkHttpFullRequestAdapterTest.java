@@ -38,8 +38,8 @@ public class SdkHttpFullRequestAdapterTest {
 
         SdkHttpFullRequest adapted = SdkHttpFullRequestAdapter.toHttpFullRequest(request);
 
-        assertThat(adapted.getHeaders().get("HeaderOne"), hasSize(1));
-        assertThat(adapted.getHeaders().get("HeaderOne").get(0), equalTo("valOne"));
+        assertThat(adapted.headers().get("HeaderOne"), hasSize(1));
+        assertThat(adapted.headers().get("HeaderOne").get(0), equalTo("valOne"));
     }
 
     @Test
@@ -49,8 +49,8 @@ public class SdkHttpFullRequestAdapterTest {
 
         SdkHttpFullRequest adapted = SdkHttpFullRequestAdapter.toHttpFullRequest(request);
 
-        assertThat(adapted.getHeaders().get("HeaderOne"), hasSize(1));
-        assertThat(adapted.getHeaders().get("HeaderOne").get(0), nullValue());
+        assertThat(adapted.headers().get("HeaderOne"), hasSize(1));
+        assertThat(adapted.headers().get("HeaderOne").get(0), nullValue());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class SdkHttpFullRequestAdapterTest {
 
         SdkHttpFullRequest adapted = SdkHttpFullRequestAdapter.toHttpFullRequest(request);
 
-        assertThat(adapted.getEndpoint(), equalTo(request.getEndpoint()));
+        assertThat(adapted.endpoint(), equalTo(request.getEndpoint()));
     }
 
     @Test
@@ -70,8 +70,8 @@ public class SdkHttpFullRequestAdapterTest {
 
         SdkHttpFullRequest adapted = SdkHttpFullRequestAdapter.toHttpFullRequest(request);
 
-        assertThat(adapted.getParameters().get("QueryParam"), hasSize(1));
-        assertThat(adapted.getParameters().get("QueryParam").get(0), equalTo("value"));
+        assertThat(adapted.queryParameters().get("QueryParam"), hasSize(1));
+        assertThat(adapted.queryParameters().get("QueryParam").get(0), equalTo("value"));
     }
 
     @Test
@@ -81,8 +81,8 @@ public class SdkHttpFullRequestAdapterTest {
 
         SdkHttpFullRequest adapted = SdkHttpFullRequestAdapter.toHttpFullRequest(request);
 
-        assertThat(adapted.getParameters().get("QueryParam"), hasSize(3));
-        assertThat(adapted.getParameters().get("QueryParam"), hasItems("foo", "bar", "baz"));
+        assertThat(adapted.queryParameters().get("QueryParam"), hasSize(3));
+        assertThat(adapted.queryParameters().get("QueryParam"), hasItems("foo", "bar", "baz"));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class SdkHttpFullRequestAdapterTest {
 
         SdkHttpFullRequest adapted = SdkHttpFullRequestAdapter.toHttpFullRequest(request);
 
-        assertThat(adapted.getResourcePath(), equalTo("/foo/bar"));
+        assertThat(adapted.resourcePath(), equalTo("/foo/bar"));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class SdkHttpFullRequestAdapterTest {
 
         SdkHttpFullRequest adapted = SdkHttpFullRequestAdapter.toHttpFullRequest(request);
 
-        assertThat(adapted.getHttpMethod(), equalTo(SdkHttpMethod.GET));
+        assertThat(adapted.httpMethod(), equalTo(SdkHttpMethod.GET));
     }
 
     @Test
@@ -113,7 +113,7 @@ public class SdkHttpFullRequestAdapterTest {
 
         SdkHttpFullRequest adapted = SdkHttpFullRequestAdapter.toHttpFullRequest(request);
 
-        assertThat(adapted.getContent(), equalTo(contents));
+        assertThat(adapted.content(), equalTo(contents));
     }
 
 

@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.TimeZone;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
-import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.interceptor.Context;
 import software.amazon.awssdk.interceptor.ExecutionAttributes;
 import software.amazon.awssdk.util.CredentialUtils;
@@ -85,28 +84,28 @@ public class QueryStringSigner extends AbstractAwsSigner {
      * @return String to sign
      * @throws SdkClientException If the string to sign cannot be calculated.
      */
-    private String calculateStringToSignV2(SdkHttpRequest request) throws SdkClientException {
+    private String calculateStringToSignV2(SdkHttpFullRequest.Builder request) throws SdkClientException {
         return "POST" + "\n" +
-               getCanonicalizedEndpoint(request.getEndpoint()) + "\n" +
+               getCanonicalizedEndpoint(request.endpoint()) + "\n" +
                getCanonicalizedResourcePath(request) + "\n" +
-               getCanonicalizedQueryString(request.getParameters());
+               getCanonicalizedQueryString(request.queryParameters());
     }
 
-    private String getCanonicalizedResourcePath(SdkHttpRequest request) {
+    private String getCanonicalizedResourcePath(SdkHttpFullRequest.Builder request) {
         String resourcePath = "";
 
-        if (request.getEndpoint().getPath() != null) {
-            resourcePath += request.getEndpoint().getPath();
+        if (request.endpoint().getPath() != null) {
+            resourcePath += request.endpoint().getPath();
         }
 
-        if (request.getResourcePath() != null) {
+        if (request.resourcePath() != null) {
             if (resourcePath.length() > 0 &&
                 !resourcePath.endsWith("/") &&
-                !request.getResourcePath().startsWith("/")) {
+                !request.resourcePath().startsWith("/")) {
                 resourcePath += "/";
             }
 
-            resourcePath += request.getResourcePath();
+            resourcePath += request.resourcePath();
         } else if (!resourcePath.endsWith("/")) {
             resourcePath += "/";
         }

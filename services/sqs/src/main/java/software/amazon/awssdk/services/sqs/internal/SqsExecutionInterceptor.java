@@ -42,7 +42,7 @@ public class SqsExecutionInterceptor implements ExecutionInterceptor {
     @Override
     public SdkHttpFullRequest modifyHttpRequest(Context.ModifyHttpRequest context, ExecutionAttributes executionAttributes) {
         SdkHttpFullRequest request = context.httpRequest();
-        URI endpoint = request.getEndpoint();
+        URI endpoint = request.endpoint();
 
         // If the request is using a non-standard endpoint, then
         // alter it to use the corresponding, standard endpoint

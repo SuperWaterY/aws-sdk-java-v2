@@ -47,28 +47,22 @@ class DefaultSdkHttpFullResponse implements SdkHttpFullResponse {
     }
 
     @Override
-    public Map<String, List<String>> getHeaders() {
+    public Map<String, List<String>> headers() {
         return headers;
     }
 
     @Override
-    public Collection<String> getValuesForHeader(String header) {
-        Collection<String> values = headers.get(header);
-        return values != null ? values : Collections.emptyList();
-    }
-
-    @Override
-    public AbortableInputStream getContent() {
+    public AbortableInputStream content() {
         return content;
     }
 
     @Override
-    public String getStatusText() {
+    public String statusText() {
         return statusText;
     }
 
     @Override
-    public int getStatusCode() {
+    public int statusCode() {
         return statusCode;
     }
 
@@ -96,14 +90,29 @@ class DefaultSdkHttpFullResponse implements SdkHttpFullResponse {
             this.headers = CollectionUtils.deepCopyMap(defaultSdkHttpFullResponse.headers);
         }
 
+        @Override
+        public String statusText() {
+            return statusText;
+        }
+
         public Builder statusText(String statusText) {
             this.statusText = statusText;
             return this;
         }
 
+        @Override
+        public int statusCode() {
+            return statusCode;
+        }
+
         public Builder statusCode(int statusCode) {
             this.statusCode = statusCode;
             return this;
+        }
+
+        @Override
+        public AbortableInputStream content() {
+            return content;
         }
 
         public Builder content(AbortableInputStream content) {
@@ -115,6 +124,11 @@ class DefaultSdkHttpFullResponse implements SdkHttpFullResponse {
         public Builder content(InputStream content) {
             return content(new AbortableInputStream(content, () -> {
             }));
+        }
+
+        @Override
+        public Map<String, List<String>> headers() {
+            return CollectionUtils.deepUnmodifiableMap(headers);
         }
 
         public Builder headers(Map<String, List<String>> headers) {

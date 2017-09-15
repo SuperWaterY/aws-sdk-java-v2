@@ -18,16 +18,19 @@ package software.amazon.awssdk.http;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+import software.amazon.awssdk.annotation.SdkPublicApi;
 
+@SdkPublicApi
+@Immutable
 public interface SdkHttpRequest extends SdkHttpHeaders {
-
     /**
      * Returns the path to the resource being requested.
      *
      * @return The path to the resource being requested.
      */
-    String getResourcePath();
+    String resourcePath();
 
     /**
      * Returns a map of all parameters in this request.
@@ -36,8 +39,7 @@ public interface SdkHttpRequest extends SdkHttpHeaders {
      *
      * @return A map of all parameters in this request.
      */
-    @ReviewBeforeRelease("Should this be 'query parameters'? It took me a while to figure out what an HTTP parameter was.")
-    Map<String, List<String>> getParameters();
+    Map<String, List<String>> queryParameters();
 
     /**
      * Returns the service endpoint (ex: "https://ec2.amazonaws.com") to which
@@ -45,7 +47,7 @@ public interface SdkHttpRequest extends SdkHttpHeaders {
      *
      * @return The service endpoint to which this request should be sent.
      */
-    URI getEndpoint();
+    URI endpoint();
 
     /**
      * Returns the HTTP method (GET, POST, etc) to use when sending this
@@ -53,5 +55,5 @@ public interface SdkHttpRequest extends SdkHttpHeaders {
      *
      * @return The HTTP method to use when sending this request.
      */
-    SdkHttpMethod getHttpMethod();
+    SdkHttpMethod httpMethod();
 }

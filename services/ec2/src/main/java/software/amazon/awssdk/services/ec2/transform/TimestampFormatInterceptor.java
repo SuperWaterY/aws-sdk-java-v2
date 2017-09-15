@@ -45,7 +45,7 @@ public final class TimestampFormatInterceptor implements ExecutionInterceptor {
         SdkHttpFullRequest request = context.httpRequest();
         Object original = context.request();
         if (original instanceof DescribeSpotFleetRequestHistoryRequest) {
-            Map<String, List<String>> params = request.getParameters();
+            Map<String, List<String>> params = request.queryParameters();
             List<String> startTime = params.get(START_TIME);
 
             if (startTime != null && !startTime.isEmpty()) {
@@ -56,7 +56,7 @@ public final class TimestampFormatInterceptor implements ExecutionInterceptor {
 
         } else if (original instanceof RequestSpotFleetRequest) {
 
-            Map<String, List<String>> params = request.getParameters();
+            Map<String, List<String>> params = request.queryParameters();
 
             List<String> validFrom = params.get(VALID_FROM);
             List<String> validUntil = params.get(VALID_UNTIL);

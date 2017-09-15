@@ -135,7 +135,7 @@ public class AmazonHttpClientTest {
         ArgumentCaptor<SdkHttpFullRequest> httpRequestCaptor = ArgumentCaptor.forClass(SdkHttpFullRequest.class);
         verify(sdkHttpClient).prepareRequest(httpRequestCaptor.capture(), any());
 
-        final String userAgent = httpRequestCaptor.getValue().getFirstHeaderValue("User-Agent")
+        final String userAgent = Headers.firstMatching(httpRequestCaptor.getValue().headers(), "User-Agent")
                 .orElseThrow(() -> new AssertionError("User-Agent header was not found"));
 
         Assert.assertTrue(userAgent.startsWith(prefix));

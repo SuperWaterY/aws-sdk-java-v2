@@ -23,6 +23,7 @@ import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.http.Headers;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 /**
@@ -78,9 +79,9 @@ public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
          * buffer the entire stream contents into memory to determine
          * the content length.
          */
-        long contentLength = request.getFirstHeaderValue("Content-Length")
-                .map(this::parseContentLength)
-                .orElse(-1L);
+        long contentLength = Headers.firstMatching(request.headers(), "Content-Length")
+                                    .map(this::parseContentLength)
+                                    .orElse(-1L);
 
         content = getContent(request);
         // TODO v2 MetricInputStreamEntity
@@ -88,7 +89,7 @@ public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
         setContent(content);
         setContentLength(contentLength);
 
-        request.getFirstHeaderValue("Content-Type").ifPresent(contentType -> {
+        Headers.firstMatching(request.headers(), "Content-Type").ifPresent(contentType -> {
             inputStreamRequestEntity.setContentType(contentType);
             setContentType(contentType);
         });
@@ -107,8 +108,8 @@ public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
      * @return The request content input stream or an empty input stream if there is no content.
      */
     private InputStream getContent(SdkHttpFullRequest request) {
-        return (request.getContent() == null) ? new ByteArrayInputStream(new byte[0]) :
-                request.getContent();
+        return (request.content() == null) ? new ByteArrayInputStream(new byte[0]) :
+               request.content();
     }
 
     @Override

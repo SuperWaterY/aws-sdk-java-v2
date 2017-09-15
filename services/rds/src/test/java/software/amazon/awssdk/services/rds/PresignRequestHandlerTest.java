@@ -54,7 +54,7 @@ public class PresignRequestHandlerTest {
         CopyDBSnapshotRequest request = makeTestRequest();
         SdkHttpFullRequest presignedRequest = modifyHttpRequest(presignInterceptor, request, marshallRequest(request));
 
-        assertNotNull(presignedRequest.getParameters().get("PreSignedUrl").get(0));
+        assertNotNull(presignedRequest.queryParameters().get("PreSignedUrl").get(0));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class PresignRequestHandlerTest {
                 "&X-Amz-Credential=foo%2F20161221%2Fus-east-1%2Frds%2Faws4_request" +
                 "&X-Amz-Signature=f839ca3c728dc96e7c978befeac648296b9f778f6724073de4217173859d13d9";
 
-        assertEquals(expectedPreSignedUrl, presignedRequest.getParameters().get("PreSignedUrl").get(0));
+        assertEquals(expectedPreSignedUrl, presignedRequest.queryParameters().get("PreSignedUrl").get(0));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class PresignRequestHandlerTest {
 
         SdkHttpFullRequest presignedRequest = modifyHttpRequest(presignInterceptor, request, marshallRequest(request));
 
-        assertEquals("PRESIGNED", presignedRequest.getParameters().get("PreSignedUrl").get(0));
+        assertEquals("PRESIGNED", presignedRequest.queryParameters().get("PreSignedUrl").get(0));
     }
 
     @Test
@@ -116,7 +116,7 @@ public class PresignRequestHandlerTest {
 
         SdkHttpFullRequest presignedRequest = modifyHttpRequest(presignInterceptor, request, marshallRequest(request));
 
-        assertNull(presignedRequest.getParameters().get("PreSignedUrl"));
+        assertNull(presignedRequest.queryParameters().get("PreSignedUrl"));
     }
 
     @Test
@@ -129,7 +129,7 @@ public class PresignRequestHandlerTest {
 
         final SdkHttpFullRequest presignedRequest = modifyHttpRequest(presignInterceptor, request, marshalled);
 
-        final URI presignedUrl = new URI(presignedRequest.getParameters().get("PreSignedUrl").get(0));
+        final URI presignedUrl = new URI(presignedRequest.queryParameters().get("PreSignedUrl").get(0));
         assertTrue(presignedUrl.toString().contains("DestinationRegion=" + destination.value()));
     }
 
@@ -139,7 +139,7 @@ public class PresignRequestHandlerTest {
         SdkHttpFullRequest marshalled = marshallRequest(request);
         SdkHttpFullRequest actual = modifyHttpRequest(presignInterceptor, request, marshalled);
 
-        assertFalse(actual.getParameters().containsKey("SourceRegion"));
+        assertFalse(actual.queryParameters().containsKey("SourceRegion"));
     }
 
     private SdkHttpFullRequest marshallRequest(CopyDBSnapshotRequest request) throws URISyntaxException {

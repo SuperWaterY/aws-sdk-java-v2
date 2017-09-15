@@ -164,8 +164,8 @@ public class RuntimeHttpUtils {
                                           boolean removeLeadingSlashInResourcePath,
                                           boolean urlEncode) {
         String resourcePath = urlEncode ?
-                SdkHttpUtils.urlEncode(request.getResourcePath(), true)
-                : request.getResourcePath();
+                SdkHttpUtils.urlEncode(request.resourcePath(), true)
+                : request.resourcePath();
 
         // Removed the padding "/" that was already added into the request's resource path.
         if (removeLeadingSlashInResourcePath
@@ -180,11 +180,11 @@ public class RuntimeHttpUtils {
 
         String urlPath = "/" + resourcePath;
         urlPath = urlPath.replaceAll("(?<=/)/", "%2F");
-        StringBuilder url = new StringBuilder(request.getEndpoint().toString());
+        StringBuilder url = new StringBuilder(request.endpoint().toString());
         url.append(urlPath);
 
         StringBuilder queryParams = new StringBuilder();
-        Map<String, List<String>> requestParams = request.getParameters();
+        Map<String, List<String>> requestParams = request.queryParameters();
         for (Map.Entry<String, List<String>> entry : requestParams.entrySet()) {
             for (String value : entry.getValue()) {
                 queryParams = queryParams.length() > 0 ? queryParams

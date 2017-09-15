@@ -50,7 +50,7 @@ public class EndpointAddressInterceptor implements ExecutionInterceptor {
                 (S3AdvancedConfiguration) executionAttributes.getAttribute(AwsExecutionAttributes.SERVICE_ADVANCED_CONFIG);
         SdkHttpFullRequest.Builder mutableRequest = request.toBuilder();
 
-        mutableRequest.endpoint(resolveEndpoint(request.getEndpoint(), originalRequest,
+        mutableRequest.endpoint(resolveEndpoint(request.endpoint(), originalRequest,
                                                 executionAttributes, advancedConfiguration));
 
         if (advancedConfiguration == null || !advancedConfiguration.pathStyleAccessEnabled()) {
@@ -144,15 +144,15 @@ public class EndpointAddressInterceptor implements ExecutionInterceptor {
      * @param bucketName     Bucket name for this particular operation.
      */
     private void changeToDnsEndpoint(SdkHttpFullRequest.Builder mutableRequest, String bucketName) {
-        if (mutableRequest.getEndpoint().getHost().startsWith("s3")) {
+        if (mutableRequest.endpoint().getHost().startsWith("s3")) {
             // Replace /bucketName from resourcePath with nothing
-            String resourcePath = mutableRequest.getResourcePath().replaceFirst("/" + bucketName, "");
+            String resourcePath = mutableRequest.resourcePath().replaceFirst("/" + bucketName, "");
 
             // Prepend bucket to endpoint
             URI endpoint = invokeSafely(() -> new URI(
-                    mutableRequest.getEndpoint().getScheme(), // Existing scheme
+                    mutableRequest.endpoint().getScheme(), // Existing scheme
                     // replace "s3" with "bucket.s3"
-                    mutableRequest.getEndpoint().getHost().replaceFirst("s3", bucketName + "." + "s3"),
+                    mutableRequest.endpoint().getHost().replaceFirst("s3", bucketName + "." + "s3"),
                     null,
                     null));
 

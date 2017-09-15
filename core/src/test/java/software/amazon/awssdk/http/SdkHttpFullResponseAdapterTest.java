@@ -159,22 +159,22 @@ public class SdkHttpFullResponseAdapterTest {
         }
 
         @Override
-        public Map<String, List<String>> getHeaders() {
+        public Map<String, List<String>> headers() {
             return headers;
         }
 
         @Override
-        public AbortableInputStream getContent() {
+        public AbortableInputStream content() {
             return content;
         }
 
         @Override
-        public String getStatusText() {
+        public String statusText() {
             return statusText;
         }
 
         @Override
-        public int getStatusCode() {
+        public int statusCode() {
             return statusCode;
         }
 

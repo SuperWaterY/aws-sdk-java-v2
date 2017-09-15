@@ -170,11 +170,11 @@ public class RetryableStage<OutputT> implements RequestToResponsePipeline<Output
 
         private Response<OutputT> doExecute() throws Exception {
             if (isRetry()) {
-                resetRequestInputStream(request.getContent());
+                resetRequestInputStream(request.content());
                 pauseBeforeRetry();
             }
 
-            markInputStream(request.getContent());
+            markInputStream(request.content());
 
             if (AmazonHttpClient.REQUEST_LOG.isDebugEnabled()) {
                 AmazonHttpClient.REQUEST_LOG

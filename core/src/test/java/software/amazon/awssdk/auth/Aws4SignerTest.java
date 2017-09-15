@@ -29,6 +29,7 @@ import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 import org.junit.Test;
 import software.amazon.awssdk.auth.internal.Aws4SignerUtils;
+import software.amazon.awssdk.http.Headers;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpMethod;
 
@@ -64,7 +65,7 @@ public class Aws4SignerTest {
         signer.setServiceName("demo");
 
         SdkHttpFullRequest signed = SignerTestUtils.signRequest(signer, request.build(), credentials);
-        assertThat(signed.getFirstHeaderValue("Authorization"))
+        assertThat(Headers.firstMatching(signed.headers(), "Authorization"))
                 .hasValue(expectedAuthorizationHeaderWithoutSha256Header);
 
 
@@ -73,7 +74,7 @@ public class Aws4SignerTest {
         request.header("x-amz-sha256", "required");
 
         signed = SignerTestUtils.signRequest(signer, request.build(), credentials);
-        assertThat(signed.getFirstHeaderValue("Authorization")).hasValue(expectedAuthorizationHeaderWithSha256Header);
+        assertThat(Headers.firstMatching(signed.headers(), "Authorization")).hasValue(expectedAuthorizationHeaderWithSha256Header);
     }
 
     @Test
@@ -96,10 +97,10 @@ public class Aws4SignerTest {
         signer.setServiceName("demo");
 
         SdkHttpFullRequest signed = SignerTestUtils.presignRequest(signer, request, credentials, null);
-        assertEquals(expectedAmzSignature, signed.getParameters().get("X-Amz-Signature").get(0));
-        assertEquals(expectedAmzCredentials, signed.getParameters().get("X-Amz-Credential").get(0));
-        assertEquals(expectedAmzHeader, signed.getParameters().get("X-Amz-Date").get(0));
-        assertEquals(expectedAmzExpires, signed.getParameters().get("X-Amz-Expires").get(0));
+        assertEquals(expectedAmzSignature, signed.queryParameters().get("X-Amz-Signature").get(0));
+        assertEquals(expectedAmzCredentials, signed.queryParameters().get("X-Amz-Credential").get(0));
+        assertEquals(expectedAmzHeader, signed.queryParameters().get("X-Amz-Date").get(0));
+        assertEquals(expectedAmzExpires, signed.queryParameters().get("X-Amz-Expires").get(0));
     }
 
     /**
@@ -118,7 +119,7 @@ public class Aws4SignerTest {
 
         SignerTestUtils.signRequest(signer, request, credentials);
 
-        assertNull(request.getHeaders().get("Authorization"));
+        assertNull(request.headers().get("Authorization"));
     }
 
     /**
@@ -138,7 +139,7 @@ public class Aws4SignerTest {
 
         SdkHttpFullRequest actual = SignerTestUtils.signRequest(signer, request.build(), credentials);
 
-        assertThat(actual.getFirstHeaderValue("Authorization"))
+        assertThat(Headers.firstMatching(actual.headers(), "Authorization"))
                 .hasValue("AWS4-HMAC-SHA256 Credential=akid/19810216/us-east-1/demo/aws4_request, " +
                           "SignedHeaders=host;x-amz-archive-description;x-amz-date, " +
                           "Signature=581d0042389009a28d461124138f1fe8eeb8daed87611d2a2b47fd3d68d81d73");

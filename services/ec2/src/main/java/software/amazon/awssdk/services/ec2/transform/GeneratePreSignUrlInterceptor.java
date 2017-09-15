@@ -66,7 +66,7 @@ public class GeneratePreSignUrlInterceptor implements ExecutionInterceptor {
              * request.
              */
 
-            URI endPointDestination = request.getEndpoint();
+            URI endPointDestination = request.endpoint();
             String destinationRegion = originalCopySnapshotRequest
                                                .destinationRegion() != null ? originalCopySnapshotRequest
                     .destinationRegion() : AwsHostNameUtils
@@ -121,10 +121,10 @@ public class GeneratePreSignUrlInterceptor implements ExecutionInterceptor {
 
     private String generateUrl(SdkHttpFullRequest request) {
 
-        URI endpoint = request.getEndpoint();
+        URI endpoint = request.endpoint();
         String uri = SdkHttpUtils.appendUri(endpoint.toString(),
-                                            request.getResourcePath(), true);
-        String encodedParams = SdkHttpUtils.encodeParameters(request);
+                                            request.resourcePath(), true);
+        String encodedParams = SdkHttpUtils.encodeQueryParameters(request.queryParameters());
 
         if (encodedParams != null) {
             uri += "?" + encodedParams;

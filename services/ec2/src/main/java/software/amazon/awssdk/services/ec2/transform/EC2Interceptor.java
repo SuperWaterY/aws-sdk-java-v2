@@ -77,7 +77,7 @@ public class EC2Interceptor implements ExecutionInterceptor {
             }
 
             // Remove any of the incorrect parameters.
-            request.getParameters().keySet().stream()
+            request.queryParameters().keySet().stream()
                    .filter(parameter -> parameter.startsWith("LaunchSpecification.GroupSet."))
                    .forEach(mutableRequest::removeQueryParameter);
         } else if (originalRequest instanceof RunInstancesRequest) {

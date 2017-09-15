@@ -20,21 +20,22 @@ import static software.amazon.awssdk.utils.CollectionUtils.deepUnmodifiableMap;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.utils.CollectionUtils;
 
 /**
- * Internal implementation of {@link SdkHttpFullRequest}. Provided to HTTP implement to execute a request.
+ * Internal implementation of {@link SdkHttpFullRequest}, buildable via {@link SdkHttpFullRequest#builder()}. Provided to HTTP
+ * implementation to execute a request.
  */
 @SdkInternalApi
+@Immutable
 class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
 
     private final Map<String, List<String>> headers;
@@ -54,37 +55,32 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
     }
 
     @Override
-    public Map<String, List<String>> getHeaders() {
+    public Map<String, List<String>> headers() {
         return headers;
     }
 
     @Override
-    public Collection<String> getValuesForHeader(String header) {
-        return headers.getOrDefault(header, Collections.emptyList());
-    }
-
-    @Override
-    public String getResourcePath() {
+    public String resourcePath() {
         return resourcePath;
     }
 
     @Override
-    public Map<String, List<String>> getParameters() {
+    public Map<String, List<String>> queryParameters() {
         return queryParameters;
     }
 
     @Override
-    public URI getEndpoint() {
+    public URI endpoint() {
         return endpoint;
     }
 
     @Override
-    public SdkHttpMethod getHttpMethod() {
+    public SdkHttpMethod httpMethod() {
         return httpMethod;
     }
 
     @Override
-    public InputStream getContent() {
+    public InputStream content() {
         return content;
     }
 
@@ -128,7 +124,7 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
         }
 
         @Override
-        public Map<String, List<String>> getHeaders() {
+        public Map<String, List<String>> headers() {
             return CollectionUtils.deepUnmodifiableMap(this.headers);
         }
 
@@ -139,7 +135,7 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
         }
 
         @Override
-        public String getResourcePath() {
+        public String resourcePath() {
             return this.resourcePath;
         }
 
@@ -168,7 +164,7 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
         }
 
         @Override
-        public Map<String, List<String>> getParameters() {
+        public Map<String, List<String>> queryParameters() {
             return CollectionUtils.deepUnmodifiableMap(this.queryParameters);
         }
 
@@ -179,7 +175,7 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
         }
 
         @Override
-        public URI getEndpoint() {
+        public URI endpoint() {
             return this.endpoint;
         }
 
@@ -190,7 +186,7 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
         }
 
         @Override
-        public SdkHttpMethod getHttpMethod() {
+        public SdkHttpMethod httpMethod() {
             return this.httpMethod;
         }
 
@@ -201,7 +197,7 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
         }
 
         @Override
-        public InputStream getContent() {
+        public InputStream content() {
             return this.content;
         }
 
@@ -211,12 +207,6 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
         @Override
         public DefaultSdkHttpFullRequest build() {
             return new DefaultSdkHttpFullRequest(this);
-        }
-
-        @Override
-        @ReviewBeforeRelease("This is why we shouldn't extend the request in the builder.")
-        public Builder toBuilder() {
-            throw new UnsupportedOperationException();
         }
     }
 

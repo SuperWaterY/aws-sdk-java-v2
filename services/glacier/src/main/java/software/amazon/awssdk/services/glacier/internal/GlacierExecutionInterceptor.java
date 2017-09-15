@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.services.glacier.internal;
 
+import software.amazon.awssdk.http.Headers;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.interceptor.Context;
 import software.amazon.awssdk.interceptor.ExecutionAttributes;
@@ -41,11 +42,12 @@ public class GlacierExecutionInterceptor implements ExecutionInterceptor {
         mutableRequest.header("x-amz-content-sha256", "required");
 
         if (originalRequest instanceof UploadMultipartPartRequest) {
-            mutableRequest.getFirstHeaderValue("Content-Range").ifPresent(range -> mutableRequest
-                    .header("Content-Length", Long.toString(parseContentLengthFromRange(range))));
+            Headers.firstMatching(mutableRequest.headers(), "Content-Range")
+                   .ifPresent(range -> mutableRequest.header("Content-Length",
+                                                             Long.toString(parseContentLengthFromRange(range))));
 
         } else if (originalRequest instanceof GetJobOutputRequest || originalRequest instanceof DescribeJobRequest) {
-            String resourcePath = mutableRequest.getResourcePath();
+            String resourcePath = mutableRequest.resourcePath();
             if (resourcePath != null) {
                 String newResourcePath = resourcePath.replace("{jobType}", "archive-retrievals");
                 mutableRequest.resourcePath(newResourcePath);

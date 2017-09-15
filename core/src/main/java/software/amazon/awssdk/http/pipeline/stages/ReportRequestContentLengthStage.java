@@ -21,6 +21,7 @@ import static software.amazon.awssdk.event.SdkProgressPublisher.publishRequestCo
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.RequestExecutionContext;
+import software.amazon.awssdk.http.Headers;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.StreamManagingStage;
 import software.amazon.awssdk.http.pipeline.RequestToRequestPipeline;
@@ -35,7 +36,7 @@ public class ReportRequestContentLengthStage implements RequestToRequestPipeline
     @Override
     public SdkHttpFullRequest execute(SdkHttpFullRequest request, RequestExecutionContext context) throws Exception {
         try {
-            request.getFirstHeaderValue("Content-Length")
+            Headers.firstMatching(request.headers(), "Content-Length")
                    .map(Long::parseLong)
                    .ifPresent(l -> publishRequestContentLength(context.requestConfig().getProgressListener(), l));
         } catch (NumberFormatException e) {

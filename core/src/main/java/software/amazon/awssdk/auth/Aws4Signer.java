@@ -37,8 +37,8 @@ import software.amazon.awssdk.auth.internal.Aws4SignerRequestParams;
 import software.amazon.awssdk.auth.internal.Aws4SignerUtils;
 import software.amazon.awssdk.auth.internal.SignerConstants;
 import software.amazon.awssdk.auth.internal.SignerKey;
+import software.amazon.awssdk.http.Headers;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
-import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.interceptor.Context;
 import software.amazon.awssdk.interceptor.ExecutionAttributes;
 import software.amazon.awssdk.internal.collections.FifoCache;
@@ -199,9 +199,9 @@ public class Aws4Signer extends AbstractAwsSigner
         mutableRequest.header(SignerConstants.X_AMZ_DATE, signerParams.getFormattedSigningDateTime());
 
         String contentSha256 = calculateContentHash(signerParams, mutableRequest);
-        mutableRequest.getFirstHeaderValue(SignerConstants.X_AMZ_CONTENT_SHA256)
-                      .filter(h -> h.equals("required"))
-                      .ifPresent(h -> mutableRequest.header(SignerConstants.X_AMZ_CONTENT_SHA256, contentSha256));
+        Headers.firstMatching(mutableRequest.headers(), SignerConstants.X_AMZ_CONTENT_SHA256)
+               .filter(h -> h.equals("required"))
+               .ifPresent(h -> mutableRequest.header(SignerConstants.X_AMZ_CONTENT_SHA256, contentSha256));
 
         final String canonicalRequest = createCanonicalRequest(mutableRequest, contentSha256);
 
@@ -272,18 +272,18 @@ public class Aws4Signer extends AbstractAwsSigner
      * .amazon.com/general/latest/gr/sigv4-create-canonical-request.html to
      * generate the canonical request.
      */
-    private String createCanonicalRequest(SdkHttpRequest request,
+    private String createCanonicalRequest(SdkHttpFullRequest.Builder request,
                                           String contentSha256) {
         /* This would url-encode the resource path for the first time. */
         final String path = SdkHttpUtils.appendUri(
-                request.getEndpoint().getPath(), request.getResourcePath());
+                request.endpoint().getPath(), request.resourcePath());
 
-        final String canonicalRequest = new StringBuilder(request.getHttpMethod().toString())
+        final String canonicalRequest = new StringBuilder(request.httpMethod().toString())
                 .append(SignerConstants.LINE_SEPARATOR)
                 // This would optionally double url-encode the resource path
                 .append(getCanonicalizedResourcePath(path, doubleUrlEncode))
                 .append(SignerConstants.LINE_SEPARATOR)
-                .append(getCanonicalizedQueryString(request.getParameters()))
+                .append(getCanonicalizedQueryString(request.queryParameters()))
                 .append(SignerConstants.LINE_SEPARATOR)
                 .append(getCanonicalizedHeaderString(request))
                 .append(SignerConstants.LINE_SEPARATOR)
@@ -414,11 +414,11 @@ public class Aws4Signer extends AbstractAwsSigner
         mutableRequest.header(SignerConstants.X_AMZ_SECURITY_TOKEN, credentials.sessionToken());
     }
 
-    private String getCanonicalizedHeaderString(SdkHttpRequest request) {
-        final List<String> sortedHeaders = new ArrayList<>(request.getHeaders().keySet());
+    private String getCanonicalizedHeaderString(SdkHttpFullRequest.Builder request) {
+        final List<String> sortedHeaders = new ArrayList<>(request.headers().keySet());
         sortedHeaders.sort(String.CASE_INSENSITIVE_ORDER);
 
-        final Map<String, List<String>> requestHeaders = request.getHeaders();
+        final Map<String, List<String>> requestHeaders = request.headers();
         StringBuilder buffer = new StringBuilder();
         for (String header : sortedHeaders) {
             if (shouldExcludeHeaderFromSigning(header)) {
@@ -439,8 +439,8 @@ public class Aws4Signer extends AbstractAwsSigner
         return buffer.toString();
     }
 
-    private String getSignedHeadersString(SdkHttpRequest request) {
-        final List<String> sortedHeaders = new ArrayList<>(request.getHeaders().keySet());
+    private String getSignedHeadersString(SdkHttpFullRequest.Builder request) {
+        final List<String> sortedHeaders = new ArrayList<>(request.headers().keySet());
         sortedHeaders.sort(String.CASE_INSENSITIVE_ORDER);
 
         StringBuilder buffer = new StringBuilder();
@@ -465,7 +465,7 @@ public class Aws4Signer extends AbstractAwsSigner
         // AWS4 requires that we sign the Host header so we
         // have to have it in the request by the time we sign.
 
-        final URI endpoint = mutableRequest.getEndpoint();
+        final URI endpoint = mutableRequest.endpoint();
         final StringBuilder hostHeaderBuilder = new StringBuilder(
                 endpoint.getHost());
         if (SdkHttpUtils.isUsingNonDefaultPort(endpoint)) {
@@ -484,8 +484,8 @@ public class Aws4Signer extends AbstractAwsSigner
      */
     protected String calculateContentHash(Aws4SignerRequestParams signerRequestParams,
                                           SdkHttpFullRequest.Builder requestBuilder) {
-        SdkHttpFullRequest requestToSign = signerRequestParams.httpRequest();
-        InputStream payloadStream = getBinaryRequestPayloadStream(requestToSign.getContent());
+        SdkHttpFullRequest.Builder requestToSign = signerRequestParams.httpRequest();
+        InputStream payloadStream = getBinaryRequestPayloadStream(requestToSign.content());
         payloadStream.mark(getReadLimit(signerRequestParams));
         String contentSha256 = BinaryUtils.toHex(hash(payloadStream));
         try {

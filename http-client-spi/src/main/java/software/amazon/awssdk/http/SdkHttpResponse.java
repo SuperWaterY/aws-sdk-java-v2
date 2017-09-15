@@ -15,14 +15,18 @@
 
 package software.amazon.awssdk.http;
 
-public interface SdkHttpResponse extends SdkHttpHeaders {
+import software.amazon.awssdk.annotation.Immutable;
+import software.amazon.awssdk.annotation.SdkPublicApi;
 
+@SdkPublicApi
+@Immutable
+public interface SdkHttpResponse extends SdkHttpHeaders {
     /**
      * Returns the HTTP status text associated with this response.
      *
      * @return The HTTP status text associated with this response.
      */
-    String getStatusText();
+    String statusText();
 
     /**
      * Returns the HTTP status code (ex: 200, 404, etc) associated with this
@@ -30,5 +34,5 @@ public interface SdkHttpResponse extends SdkHttpHeaders {
      *
      * @return The HTTP status code associated with this response.
      */
-    int getStatusCode();
+    int statusCode();
 }

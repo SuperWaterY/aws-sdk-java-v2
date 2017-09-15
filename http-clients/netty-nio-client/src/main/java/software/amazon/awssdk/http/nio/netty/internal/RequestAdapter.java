@@ -31,21 +31,21 @@ public final class RequestAdapter {
 
     public HttpRequest adapt(SdkHttpRequest sdkRequest) {
         String uri = uriFrom(sdkRequest);
-        HttpMethod method = toNettyHttpMethod(sdkRequest.getHttpMethod());
+        HttpMethod method = toNettyHttpMethod(sdkRequest.httpMethod());
         HttpHeaders headers = new DefaultHttpHeaders();
         DefaultHttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, method, uri, headers);
-        sdkRequest.getHeaders().forEach(request.headers()::add);
+        sdkRequest.headers().forEach(request.headers()::add);
         return request;
     }
 
     private String uriFrom(SdkHttpRequest sdkRequest) {
-        StringBuilder uriBuilder = new StringBuilder(sdkRequest.getEndpoint().toString());
-        if (isNotBlank(sdkRequest.getResourcePath())) {
-            uriBuilder.append(sdkRequest.getResourcePath());
+        StringBuilder uriBuilder = new StringBuilder(sdkRequest.endpoint().toString());
+        if (isNotBlank(sdkRequest.resourcePath())) {
+            uriBuilder.append(sdkRequest.resourcePath());
         }
 
         QueryStringEncoder encoder = new QueryStringEncoder(uriBuilder.toString());
-        sdkRequest.getParameters().forEach((k, values) -> values.forEach(v -> encoder.addParam(k, v)));
+        sdkRequest.queryParameters().forEach((k, values) -> values.forEach(v -> encoder.addParam(k, v)));
         return encoder.toString();
     }
 
