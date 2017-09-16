@@ -119,7 +119,7 @@ public class ApacheHttpRequestFactory {
          * preparation for the retry. Eventually, these wrappers would
          * return incorrect validation result.
          */
-        if (request.content() != null) {
+        if (request.content().isPresent()) {
             HttpEntity entity = new RepeatableInputStreamRequestEntity(request);
             if (request.headers().get(HttpHeaders.CONTENT_LENGTH) == null) {
                 entity = ApacheUtils.newBufferedHttpEntity(entity);

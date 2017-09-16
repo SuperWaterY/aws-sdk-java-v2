@@ -200,10 +200,10 @@ public class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHttpFull
 
         private CompletableFuture<Response<OutputT>> doExecute() throws Exception {
             if (isRetry()) {
-                resetRequestInputStream(request.content());
+                resetRequestInputStream(request.content().orElse(null));
             }
 
-            markInputStream(request.content());
+            markInputStream(request.content().orElse(null));
 
             if (AmazonHttpClient.REQUEST_LOG.isDebugEnabled()) {
                 AmazonHttpClient.REQUEST_LOG

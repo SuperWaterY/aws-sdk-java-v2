@@ -108,8 +108,7 @@ public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
      * @return The request content input stream or an empty input stream if there is no content.
      */
     private InputStream getContent(SdkHttpFullRequest request) {
-        return (request.content() == null) ? new ByteArrayInputStream(new byte[0]) :
-               request.content();
+        return request.content().orElseGet(() -> new ByteArrayInputStream(new byte[0]));
     }
 
     @Override

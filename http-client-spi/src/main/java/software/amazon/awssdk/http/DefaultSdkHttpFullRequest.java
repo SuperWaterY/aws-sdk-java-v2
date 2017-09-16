@@ -92,7 +92,7 @@ class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
     }
 
     @Override
-    public Integer port() {
+    public int port() {
         return Optional.ofNullable(port).orElseGet(() -> SdkHttpUtils.standardPort(protocol()));
     }
 

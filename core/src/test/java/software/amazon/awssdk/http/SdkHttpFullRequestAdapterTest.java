@@ -115,7 +115,7 @@ public class SdkHttpFullRequestAdapterTest {
 
         SdkHttpFullRequest adapted = SdkHttpFullRequestAdapter.toHttpFullRequest(request);
 
-        assertThat(adapted.content(), equalTo(contents));
+        assertThat(adapted.content().orElse(null), equalTo(contents));
     }
 
 

@@ -47,7 +47,7 @@ public class MoveParametersToBodyStageTest {
         assertThat(output.headers())
                 .containsKey("Content-Length")
                 .containsEntry("Content-Type", singletonList("application/x-www-form-urlencoded; charset=utf-8"));
-        assertThat(output.content()).isNotNull();
+        assertThat(output.content()).isNotEmpty();
     }
 
     @Test
@@ -69,7 +69,7 @@ public class MoveParametersToBodyStageTest {
 
         assertThat(output.queryParameters()).hasSize(1);
         assertThat(output.headers()).hasSize(0);
-        assertThat(output.content()).isEqualTo(content);
+        assertThat(output.content()).hasValue(content);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class MoveParametersToBodyStageTest {
 
         assertThat(output.queryParameters()).hasSize(0);
         assertThat(output.headers()).hasSize(0);
-        assertThat(output.content()).isNull();
+        assertThat(output.content()).isEmpty();
     }
 
     private void nonPostRequestsUnaltered(SdkHttpMethod method) {
@@ -95,7 +95,7 @@ public class MoveParametersToBodyStageTest {
 
         assertThat(output.queryParameters()).hasSize(1);
         assertThat(output.headers()).hasSize(0);
-        assertThat(output.content()).isNull();
+        assertThat(output.content()).isEmpty();
     }
 
     private RequestExecutionContext requestContext(SdkHttpFullRequest.Builder mutableRequest) {

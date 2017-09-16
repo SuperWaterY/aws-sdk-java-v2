@@ -129,8 +129,8 @@ public class ExecutionInterceptorTest {
 
         // Expect
         Context.BeforeTransmission beforeTransmissionArg = captureBeforeTransmissionArg(interceptor);
-        beforeTransmissionArg.httpRequest().content().reset();
-        assertThat(beforeTransmissionArg.httpRequest().content().read()).isEqualTo(0);
+        beforeTransmissionArg.httpRequest().content().get().reset();
+        assertThat(beforeTransmissionArg.httpRequest().content().get().read()).isEqualTo(0);
     }
 
     @Test
@@ -147,13 +147,13 @@ public class ExecutionInterceptorTest {
 
         // Expect
         Context.BeforeTransmission beforeTransmissionArg = captureBeforeTransmissionArg(interceptor);
-        beforeTransmissionArg.httpRequest().content().reset();
+        beforeTransmissionArg.httpRequest().content().get().reset();
 
-        // TODO: The content should actually be null to match responses. We can fix this by updating the StructuredJsonGenerator
+        // TODO: The content should actually be empty to match responses. We can fix this by updating the StructuredJsonGenerator
         // to use null for NO-OP marshalling of payloads. This will break streaming POST operations for JSON because of a hack in
         // the MoveParametersToBodyStage, but we can move the logic from there into the query marshallers (why the hack exists)
         // and then everything should be good for JSON.
-        assertThat(beforeTransmissionArg.httpRequest().content().read()).isEqualTo(-1);
+        assertThat(beforeTransmissionArg.httpRequest().content().get().read()).isEqualTo(-1);
     }
 
     @Test
